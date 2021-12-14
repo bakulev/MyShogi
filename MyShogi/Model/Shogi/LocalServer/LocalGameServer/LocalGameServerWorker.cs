@@ -544,14 +544,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// エンジンを開始する。UsiEnginePlayer.Start()を呼び出す。
-        /// InitUsiEnginePlayer()をしたのちに、エンジンに接続したいタイミングで呼び出すべし。
+        /// Start the engine. Call UsiEnginePlayer.Start ().
+        /// After doing InitUsiEnginePlayer (), call it when you want to connect to the engine.
         /// </summary>
         /// <param name="usiEnginePlayer"></param>
         /// <param name="engineDefineEx"></param>
         private void StartEngine(UsiEnginePlayer usiEnginePlayer , EngineDefineEx engineDefineEx)
         {
-            // 実行ファイルを起動する
+            // Start the executable file
             usiEnginePlayer.Start(engineDefineEx.EngineDefine.EngineExeFileName());
         }
 
@@ -1144,14 +1144,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             GameMode = GameModeEnum.ConsiderationWithoutEngine;
             continuousGame.EndTime = DateTime.Now;
 
-            // 時間消費、停止
+            // Time consumption, stop
             foreach (var c in All.Colors())
                 PlayTimer(c).StopTimer();
 
-            // 棋譜の自動保存
+            // Automatic saving of game records
             AutomaticSaveKifu( lastMove );
 
-            // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
+            // When a continuous game is set, the next game is started here without Disconnect ().
             continuousGame.IncPlayCount();
             if (continuousGame.MustRestart())
             {
@@ -1159,13 +1159,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                 return;
             }
 
-            // 棋譜ウィンドウ、勝手に書き換えられると困るのでこれでfixさせておく。
+            // Since it is a problem if the game record window is rewritten without permission, fix it with this.
             kifuManager.EnableKifuList = false;
 
-            // 連続対局でないなら..
+            // If not a continuous game ..
             Disconnect();
 
-            // 手番が変わったことを通知。
+            // Notify that your turn has changed.
             NotifyTurnChanged();
         }
 
@@ -1289,7 +1289,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 棋譜の自動保存処理
+        /// Automatic saving process of game record
         /// </summary>
         private void AutomaticSaveKifu(Move lastMove)
         {
@@ -1297,20 +1297,20 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 var lastColor = Position.sideToMove;
 
-                // 1) 勝敗のカウンターを加算
-                // (これは棋譜の自動保存が無効であってもなされなくてはならない)
+                // 1)Add the win / loss counter
+                // (This must be done even if auto-save of game records is disabled)
 
                 continuousGame.IncResult(lastMove, lastColor);
 
-                // この対局棋譜を保存しなければならないなら保存する。
+                // If you have to save this game record, save it.
                 var setting = TheApp.app.Config.GameResultSetting;
                 if (!setting.AutomaticSaveKifu)
                     return;
 
-                // 2) 棋譜ファイルを保存する。
+                // 2) Save the game record file.
 
-                // プレイヤー名を棋譜上に反映させる。
-                // →　これは、DisplayName()と同等であればすでに設定されている。
+                // Reflect the player name on the game record.
+                // →　This is already set if it is equivalent to DisplayName ().
 
                 var kifu = kifuManager.ToString(setting.KifuFileType);
                 var filename = $"{continuousGame.GetKifuSubfolder()}{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
@@ -1318,14 +1318,14 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 FileIO.WriteFile(filePath, kifu);
 
-                // 3) csvファイルに情報をappendする。
+                // 3) Append information to a csv file.
 
                 var table = new GameResultTable();
                 var csv_path = setting.CsvFilePath();
                 var handicapped = Position.Handicapped;
                 var timeSettingStrings = !handicapped ?
-                    $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}" :
-                    $"下手:{TimeSettingString(Color.BLACK)},上手:{TimeSettingString(Color.WHITE)}";
+                    $"First move:{TimeSettingString(Color.BLACK)},Gote:{TimeSettingString(Color.WHITE)}" :
+                    $"poor:{TimeSettingString(Color.BLACK)},good:{TimeSettingString(Color.WHITE)}";
 
                 var result = new GameResultData()
                 {
@@ -1335,7 +1335,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     KifuFileName = filename,
                     LastMove = lastMove,
                     LastColor = lastColor,
-                    GamePly = Position.gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
+                    GamePly = Position.gamePly - 1 /* If you are stuck with the 31st move, the number of moves for the game record is 30. */,
                     BoardType = kifuManager.Tree.rootBoardType,
                     TimeSettingString = timeSettingStrings,
                     Handicapped = handicapped,
@@ -1343,11 +1343,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 };
                 table.AppendLine(csv_path, result);
 
-                // 連続対局の最終局であるなら、連続対局のトータルの結果を出力する。
+                // If it is the final station of a continuous game, the total result of the continuous game is output.
 
                 if (continuousGame.IsLastGame())
                 {
-                    // これが連続対局の最終局であったのなら、結果を書き出す。
+                    // If this was the final station of a continuous game, write out the results.
                     result = new GameResultData()
                     {
                         Comment = continuousGame.GetGameResultString()
@@ -1356,7 +1356,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 }
             } catch (Exception ex)
             {
-                // ファイルの書き出しに失敗などで例外が出て落ちるのはちょっと格好が悪いので捕捉しておく。
+                // It's a bit ugly to get an exception due to a failure to write the file, so catch it.
                 TheApp.app.MessageShow(ex, false);
             }
         }

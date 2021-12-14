@@ -38,14 +38,14 @@ namespace MyShogi.View.Win2D.Info
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(600, 327);
+            this.panel1.Size = new System.Drawing.Size(631, 344);
             this.panel1.TabIndex = 2;
             // 
             // EvalGraphDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(101F, 101F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(600, 360);
+            this.ClientSize = new System.Drawing.Size(631, 379);
             this.ControlBox = false;
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -53,11 +53,10 @@ namespace MyShogi.View.Win2D.Info
             this.MinimizeBox = false;
             this.Name = "EvalGraphDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "形勢グラフ";
+            this.Text = "Trend graph";
             this.Move += new System.EventHandler(this.EvalGraphDialog_Move);
             this.Resize += new System.EventHandler(this.EvalGraphDialog_Resize);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

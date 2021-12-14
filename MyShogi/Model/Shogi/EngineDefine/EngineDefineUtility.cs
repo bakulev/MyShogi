@@ -10,12 +10,12 @@ using MyShogi.Model.Shogi.Usi;
 namespace MyShogi.Model.Shogi.EngineDefine
 {
     /// <summary>
-    /// EngineDefineのユーティリティ
+    /// EngineDefine utility
     /// </summary>
     public static class EngineDefineUtility
     {
         /// <summary>
-        /// "engine_define.xml"というファイルを読み込んで、デシリアライズする。
+        /// "engine_define.xml"Read the file and deserialize it.
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
@@ -23,28 +23,29 @@ namespace MyShogi.Model.Shogi.EngineDefine
         {
             var def = Serializer.Deserialize<EngineDefine>(filepath);
 
-            // 読み込めなかったので新規に作成する。
+            // I couldn't read it, so I created a new one.
             if (def == null)
                 def = new EngineDefine();
 
-            // バナーファイル名、実行ファイルのファイル名などをfull pathに変換しておく。
+            // Convert the banner file name, executable file name, etc. to full path.
 
             var current = Path.GetDirectoryName(filepath);
             def.BannerFileName = Path.Combine(current, def.BannerFileName);
             def.EngineExeName = Path.Combine(current, def.EngineExeName);
 
-            // presetの1つ目に「カスタム」を挿入。
+            // Insert "custom" in the first preset.
 
-            var custom_preset = new EnginePreset("カスタム",
-                "カスタム・チューニングです。「詳細設定」の内容に従います。\r\n" +
-                "CPU負荷率が気になる方は、「詳細設定」の「スレッド数」のところで調整してください。");
+            var custom_preset = new EnginePreset("custom",
+                "Custom tuning. Follow the contents of \"Detailed settings\".\r\n" +
+                "If you are concerned about the CPU load factor, adjust it in \"Number of threads\" in \"Detailed settings\".");
+            if (def.Presets == null) def.Presets = new List<EnginePreset>();
             def.Presets.Insert(0, custom_preset);
 
             return def;
         }
 
         /// <summary>
-        /// ファイルにEngineDefineをシリアライズして書き出す。
+        /// Serialize and export EngineDefine to a file.
         /// </summary>
         /// <param name="filepath"></param>
         /// <param name="engine_define"></param>
@@ -54,30 +55,30 @@ namespace MyShogi.Model.Shogi.EngineDefine
         }
 
         /// <summary>
-        /// 現在の環境に合わせた実行ファイル名が返る。
+        /// The executable file name that matches the current environment is returned.
         /// 
-        /// 例) "EngineExeName_avx2.exe"
+        /// example) "EngineExeName_avx2.exe"
         /// </summary>
         /// <param name="engine_define"></param>
         /// <returns></returns>
         public static string EngineExeFileName(this EngineDefine engine_define)
         {
-            // 現在の環境を確定させる。
+            // Establish the current environment.
             var current_cpu = CpuUtil.GetCurrentCpu();
 
-            // サポートしている実行ファイルのなかで、一番いいものにする。
-            // サポートされているものがなければ、XXX_unknown.exeになってそのあと
-            // ファイルが存在せず例外が出ることになるがこれはいい動作と言えるのかどうか…。
+            // Make it the best executable file it supports.
+            // If there is no supported one, it will be XXX_unknown.exe and then
+            // The file doesn't exist and an exception is thrown, but is this a good thing?
             var cpu = CpuType.UNKNOWN;
             foreach (var c in engine_define.SupportedCpus)
-                if (c <= current_cpu /* 現在のCPUで動作する*/ && cpu < c /* 一番ええやつ */)
+                if (c <= current_cpu /* Works on current CPU */ && cpu < c /* The best guy */)
                     cpu = c;
 
             return $"{ engine_define.EngineExeName }_{ cpu.ToSuffix()}.exe";
         }
 
         /// <summary>
-        /// 実行ファイル配下のengineフォルダを調べて、"engine_define.xml"へのpathをすべて返す。
+        /// Check the engine folder under the executable file and return all the paths to "engine_define.xml".
         /// </summary>
         /// <returns></returns>
         public static List<string> GetEngineDefineFiles()
@@ -89,7 +90,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             var folders = Directory.GetDirectories(engine_folder);
             foreach(var f in folders)
             {
-                // このフォルダに"engine_define.xml"があれば、それを追加していく。
+                // If there is "engine_define.xml" in this folder, add it.
                 var path = Path.Combine(f, "engine_define.xml");
                 if (File.Exists(path))
                     result.Add(path);
@@ -98,16 +99,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
         }
 
         /// <summary>
-        /// 実行ファイル配下のengineフォルダを調べて、それぞれの"engine_define.xml"を読み込んで
+        /// Check the engine folder under the executable file and read each "engine_define.xml"
         /// EngineDefineのListを返す。
         /// </summary>
         /// <returns></returns>
         public static List<EngineDefineEx> GetEngineDefines()
         {
-            // 実行ファイル配下のengine/フォルダ配下にある"engine_define.xml"を列挙する。
+            // List "engine_define.xml" under the engine / folder under the executable file.
             var def_files = GetEngineDefineFiles();
 
-            // MyShogiの実行フォルダ。これをfilenameから削って、相対pathを得る。
+            // Execution folder of MyShogi. Remove this from filename to get the relative path.
             var current_path = Path.GetDirectoryName(Application.ExecutablePath);
 
             var list = new List<EngineDefineEx>();
@@ -126,11 +127,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     list.Add(engine_define_ex);
                 } catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"{filename}の解析に失敗しました。\n例外名" + ex.Message , MessageShowType.Error);
+                    TheApp.app.MessageShow($"{filename}Failed to analyze. \nException name" + ex.Message , MessageShowType.Error);
                 }
             }
 
-            // EngineDefine.EngineOrderの順で並び替える。
+            // EngineDefine.EngineOrder Sort in the order of.
             list.Sort((x ,y) => y.EngineDefine.DisplayOrder - x.EngineDefine.DisplayOrder);
 
             return list;

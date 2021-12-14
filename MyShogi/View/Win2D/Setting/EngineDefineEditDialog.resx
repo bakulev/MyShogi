@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label7.Text" xml:space="preserve">
+    <value>It is assumed that there is an executable file for each CPU. For example, 
+in the text box on the left, If you write Apery, the executable file 
+for AVX2 is Apery_avx2.exe.
+It is assumed that the thought engine body of the name is prepared.</value>
+  </data>
 </root>

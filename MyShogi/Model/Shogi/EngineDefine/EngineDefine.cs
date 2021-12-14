@@ -5,143 +5,142 @@ using System.Runtime.Serialization;
 namespace MyShogi.Model.Shogi.EngineDefine
 {
     /// <summary>
-    /// USI2.0で規定されているエンジン設定ファイル。
-    /// これをxml形式にシリアライズしたものを思考エンジンの実行ファイルのフォルダに配置する。
+    /// Engine configuration file specified by USI 2.0.
+    /// Place this serialized in xml format in the folder of the thought engine executable file.
     /// 
-    /// GUI側では起動時にこのファイルを読み込み、これを活用する。
+    /// On the GUI side, this file is read at startup and used.
     /// </summary>
     [DataContract]
     public class EngineDefine
     {
         /// <summary>
-        /// エンジン説明1行で
+        /// Engine description in one line
         /// </summary>
         [DataMember]
-        public string DescriptionSimple { get; set; } = "エンジン説明";
+        public string DescriptionSimple { get; set; } = "Engine description";
 
         /// <summary>
-        /// エンジン説明5行ぐらいで。
-        /// エンジン選択のときに表示される。
+        /// About 5 lines of engine explanation.
+        /// Displayed when the engine is selected.
         /// </summary>
         [DataMember]
-        public string Description { get; set; } = "エンジン説明";
+        public string Description { get; set; } = "Engine description";
 
         /// <summary>
-        /// エンジンのバナー : 横512px×縦160pxのpng形式 推奨。
-        /// このファイルがあるフォルダ相対
+        /// Engine banner: 512px horizontal x 160px vertical png format recommended.
+        /// Relative to the folder where this file is located
         /// </summary>
         [DataMember]
         public string BannerFileName { get; set; } = "banner.png";
 
         /// <summary>
-        /// エンジンの表示名
-        /// 
-        /// この名前が画面に表示される。
+        /// Engine display name
+        /// This name will be displayed on the screen.
         /// </summary>
         [DataMember]
-        public string DisplayName { get; set; } = "思考エンジン";
+        public string DisplayName { get; set; } = "Thinking engine";
 
         /// <summary>
-        /// エンジンの実行ファイル名。
+        /// The executable file name of the engine.
         /// 
-        /// 例えばこの値を"engine"としておくと、EngineExeFileName()を使った時に、AVX2用ならば"engine_avx2.exe"のようになる。
+        /// For example, if this value is set to "engine", when using EngineExeFileName (), it will be "engine_avx2.exe" for AVX2.
         /// 
-        /// 例)
-        ///     "engine_nosse.exe"  : 32bit版
-        ///     "engine_sse2.exe"   : 64bit版sse2対応
-        ///     "engine_sse41.exe"  : 64bit版sse4.1対応
-        ///     "engine_sse42.exe"  : 64bit版sse4.2対応
-        ///     "engine_avx2.exe"   : 64bit版avx2対応
-        ///     "engine_avx512.exe" : 64bit版avx512対応
+        /// example)
+        ///     "engine_nosse.exe"  : 32bit Edition
+        ///     "engine_sse2.exe"   : 64bit Version sse2 compatible
+        ///     "engine_sse41.exe"  : 64bit Version sse4.1 compatible
+        ///     "engine_sse42.exe"  : 64bit Version sse4.2 compatible
+        ///     "engine_avx2.exe"   : 64bit Version avx2 compatible
+        ///     "engine_avx512.exe" : 64bit Version avx512 compatible
         /// </summary>
         [DataMember]
         public string EngineExeName { get; set; } = "engine";
 
         /// <summary>
-        /// エンジンがサポートしているCPUを列挙する。
+        /// List the CPUs supported by the engine.
         /// 
-        /// 例えば、思考エンジンがSSE2をサポートしていて、SSE4.1をサポートしていなくて、
-        /// 動作環境がSSE4.1なら、SSE2の実行ファイルを呼び出せば良いとわかる。
+        /// For example, the thinking engine supports SSE2 but not SSE4.1,
+        /// If the operating environment is SSE4.1, you can see that you should call the SSE2 executable file.
         /// 
-        /// ※　EngineUtility.EngineExeFileName()がそういう処理を行っている。
+        /// * EngineUtility.EngineExeFileName () performs such processing.
         /// </summary>
         [DataMember]
         public List<CpuType> SupportedCpus { get; set; } = new List<CpuType>(new []
         { CpuType.NO_SSE, CpuType.SSE2 , CpuType.SSE41 , CpuType.SSE42 , CpuType.AVX2 });
 
         /// <summary>
-        /// 使用するメモリ 探索で使用するメモリ(HASHは除く)単位は[MB]
+        /// Memory used Memory used in search (excluding HASH) Unit is [MB]
         ///
-        /// EvalHashが130MBほどあるのでUSI待受スレッド用(25MB)+定跡丸読み(50MB程度) ≒ 200MB。
-        /// NO SSEの時はEvalHashは無効だが、まあ、少し多めに評価している分には問題ないか…。
-        /// 定跡ファイルが大きいとこれよりメモリがたくさん必要になる。
+        /// Since EvalHash is about 130MB, it is for USI standby thread (25MB) + book reading (about 50MB) ≒ 200MB.
+        /// Eval Hash is invalid at NO SSE, but isn't it a problem if you evaluate it a little more?
+        /// Larger joseki files require more memory than this.
         /// </summary>
         [DataMember]
         public Int64 WorkingMemory { get; set; } = 200;
 
         /// <summary>
-        /// スレッドごとのサイズ。単位は[MB]
-        /// Threads設定×この値分だけ余分に物理メモリを消費するものとする。
+        /// The size per thread. The unit is [MB]
+        /// Threads setting × It is assumed that extra physical memory is consumed by this value.
         /// </summary>
         [DataMember]
         public Int64 StackPerThread { get; set; } = 25;
 
         /// <summary>
-        /// 評価関数用のメモリ。単位は[MB]
-        /// (EvalShareをオンにしてメモリ共有をする場合は、2つ目のエンジンはこの分だけ減算される。)
+        /// Memory for merit function. The unit is [MB]
+        /// (If EvalShare is turned on for memory sharing, the second engine will be deducted by this amount.)
         /// </summary>
         [DataMember]
         public Int64 EvalMemory { get; set; } = 470;
 
         /// <summary>
-        /// 置換表(HASH)用の最小メモリ。これくらいはないとまともに動かないというライン。
-        /// 単位は[MB]
+        /// Minimum memory for replacement table (HASH). A line that doesn't work properly without this much.
+        /// The unit is [MB]
         /// 
-        /// ※　GUI側では、RequiredMemory + MinimumHashMemoryの分だけ空き物理メモリがないとエンジン選択時に警告を出す。
+        /// * On the GUI side, a warning is issued when the engine is selected if there is no free physical memory for RequiredMemory + MinimumHashMemory.
         /// </summary>
         [DataMember]
         public Int64 MinimumHashMemory { get; set; } = 128;
 
         /// <summary>
-        /// エンジン選択画面での表示順。これが大きい順に表示することになっている。
-        /// デフォルト0。(一番最後に表示される)
+        /// Display order on the engine selection screen. This is supposed to be displayed in descending order.
+        /// Default 0. (Displayed at the very end)
         /// 
-        /// 商用版のために10000～19999を予約。
-        /// 商用版(2018)は10000～10099を使用。
-        /// 駒得大好き君が9000を使用。
-        /// 商用版(2018)のユーザーが追加したエンジンは8000を使用。(末尾に追加されて欲しいので)
+        /// Book 10,000-19999 for commercial version.
+        /// Commercial version (2018) uses 10000-10099.
+        /// You who love Komatoku use 9000.
+        /// The engine added by the user of the commercial version (2018) uses 8000. (Because I want it to be added at the end)
         /// </summary>
         [DataMember]
         public int DisplayOrder { get; set; } = 0;
 
         /// <summary>
-        /// おまかせ設定集
+        /// Random setting collection
         /// </summary>
         [DataMember]
         public List<EnginePreset> Presets;
 
         /// <summary>
-        /// EngineType == 0 : 通常探索エンジン。(goコマンドが送れる)
-        /// EngineType == 1 : 詰将棋に対応しているか。(go mateコマンドが送れる)
-        /// EngineType == 2 : 通常探索＋詰将棋対応のエンジン
+        /// EngineType == 0 : Normal search engine. (You can send a go command)
+        /// EngineType == 1 : Does it correspond to Tsume Shogi? (Send go mate command)
+        /// EngineType == 2 : Engine for normal search + Tsume shogi
         ///
-        /// その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。
+        /// In addition, special engines such as those for checkered shogi will be added here in the future.
         /// </summary>
         [DataMember]
         public int EngineType { get; set; } = 0;
 
         /// <summary>
-        /// setoptionで設定出来るオプションに対する説明。
-        /// nullであってもエンジンに対して"usi"を送信して、その時に返ってきたものを
-        /// 表示するので問題はない。
+        /// A description of the options that can be set with setoption.
+        /// Even if it is null, send "usi" to the engine and return what was returned at that time
+        /// There is no problem because it is displayed.
         /// </summary>
         [DataMember]
         public List<EngineOptionDescription> EngineOptionDescriptions;
 
         /// <summary>
-        /// USI拡張プロトコルのうちサポートしているものを列挙する。
+        /// List the supported USI extended protocols.
         /// 
-        /// なければないで良い。
+        /// You don't have to.
         /// </summary>
         [DataMember]
         public List<ExtendedProtocol> SupportedExtendedProtocol;

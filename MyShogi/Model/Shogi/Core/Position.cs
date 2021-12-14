@@ -132,8 +132,9 @@ namespace MyShogi.Model.Shogi.Core
         private StateInfo st;
 
         /// <summary>
-        /// 局面の付随情報
-        /// st.previousで1手前の局面の情報が得られるので千日手判定などに用いる
+        /// Affiliated information of the phase Since information on
+        /// the previous phase can be obtained with st.previous,
+        /// it is used for Sennichite judgment etc.
         /// </summary>
         public StateInfo State() { return st; }
 

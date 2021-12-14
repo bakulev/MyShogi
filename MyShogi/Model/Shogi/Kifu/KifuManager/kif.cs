@@ -453,109 +453,109 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// KIF形式の文字列に変換
-        /// これをこのままファイルに書き出すとKIF形式のファイルになる。
+        /// Convert to KIF format character string
+        /// If you write this to a file as it is, it will be a KIF format file.
         /// </summary>
         /// <returns></returns>
         private string ToKifString()
         {
             var sb = new StringBuilder();
 
-            // Kifu for Windows V7 ( http://kakinoki.o.oo7.jp/Kifuw7.htm ) 向けのヘッダ、これが無いとUTF-8形式の棋譜と認識して貰えない
+            // Kifu for Windows V7 ( http://kakinoki.o.oo7.jp/Kifuw7.htm ) Header for, without this, it will not be recognized as a UTF-8 format game record
             sb.AppendLine("#KIF version=2.0 encoding=UTF-8");
 
-            // 手合割 / 局面図
+            // Handicap / Phase diagram
             switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
-                    sb.AppendLine("手合割：平手");
+                    sb.AppendLine("Handicap: Hirate");
                     break;
                 case BoardType.HandicapKyo:
-                    sb.AppendLine("手合割：香落ち");
+                    sb.AppendLine("Handicap: Incense drop");
                     break;
                 case BoardType.HandicapRightKyo:
-                    sb.AppendLine("手合割：右香落ち");
+                    sb.AppendLine("Handicap: Right scent drop");
                     break;
                 case BoardType.HandicapKaku:
-                    sb.AppendLine("手合割：角落ち");
+                    sb.AppendLine("Handicap: Handicap");
                     break;
                 case BoardType.HandicapHisya:
-                    sb.AppendLine("手合割：飛車落ち");
+                    sb.AppendLine("Handicap: Dropped");
                     break;
                 case BoardType.HandicapHisyaKyo:
-                    sb.AppendLine("手合割：飛香落ち");
+                    sb.AppendLine("Handicap: Dropping scent");
                     break;
                 case BoardType.Handicap2:
-                    sb.AppendLine("手合割：二枚落ち");
+                    sb.AppendLine("Handicap: Two pieces dropped");
                     break;
                 case BoardType.Handicap3:
-                    sb.AppendLine("手合割：三枚落ち");
+                    sb.AppendLine("Handicap: Three drops");
                     break;
                 case BoardType.Handicap4:
-                    sb.AppendLine("手合割：四枚落ち");
+                    sb.AppendLine("Handicap: 4 drops");
                     break;
                 case BoardType.Handicap5:
-                    sb.AppendLine("手合割：五枚落ち");
+                    sb.AppendLine("Handicap: Five drops");
                     break;
                 case BoardType.HandicapLeft5:
-                    sb.AppendLine("手合割：左五枚落ち");
+                    sb.AppendLine("Handicap: Five left");
                     break;
                 case BoardType.Handicap6:
-                    sb.AppendLine("手合割：六枚落ち");
+                    sb.AppendLine("Handicap: Six drops");
                     break;
                 case BoardType.Handicap8:
-                    sb.AppendLine("手合割：八枚落ち");
+                    sb.AppendLine("Handicap: Eight pieces dropped");
                     break;
                 case BoardType.Handicap10:
-                    sb.AppendLine("手合割：十枚落ち");
+                    sb.AppendLine("Handicap: Ten sheets dropped");
                     break;
                 default:
                     sb.AppendLine(Tree.position.ToBod().TrimEnd(char_spaces));
                     break;
             }
 
-            // 先手対局者名
-            if (KifuHeader.header_dic.ContainsKey("先手"))
-                sb.AppendLine($"先手：{KifuHeader.PlayerNameBlack}");
-            else if (KifuHeader.header_dic.ContainsKey("下手"))
-                sb.AppendLine($"下手：{KifuHeader.PlayerNameBlack}");
+            // First player name
+            if (KifuHeader.header_dic.ContainsKey("First move"))
+                sb.AppendLine($"First move：{KifuHeader.PlayerNameBlack}");
+            else if (KifuHeader.header_dic.ContainsKey("poor"))
+                sb.AppendLine($"poor：{KifuHeader.PlayerNameBlack}");
             else switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
                 case BoardType.Others:
-                    sb.AppendLine($"先手：{KifuHeader.PlayerNameBlack}");
+                    sb.AppendLine($"First move：{KifuHeader.PlayerNameBlack}");
                     break;
                 default:
-                    sb.AppendLine($"下手：{KifuHeader.PlayerNameBlack}");
+                    sb.AppendLine($"poor：{KifuHeader.PlayerNameBlack}");
                     break;
             }
 
-            // 後手対局者名
-            if (KifuHeader.header_dic.ContainsKey("後手"))
-                sb.AppendLine($"後手：{KifuHeader.PlayerNameWhite}");
-            else if (KifuHeader.header_dic.ContainsKey("上手"))
-                sb.AppendLine($"上手：{KifuHeader.PlayerNameWhite}");
+            // Gote player name
+            if (KifuHeader.header_dic.ContainsKey("Gote"))
+                sb.AppendLine($"Gote：{KifuHeader.PlayerNameWhite}");
+            else if (KifuHeader.header_dic.ContainsKey("good"))
+                sb.AppendLine($"good：{KifuHeader.PlayerNameWhite}");
             else switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
                 case BoardType.Others:
-                    sb.AppendLine($"後手：{KifuHeader.PlayerNameWhite}");
+                    sb.AppendLine($"Gote：{KifuHeader.PlayerNameWhite}");
                     break;
                 default:
-                    sb.AppendLine($"上手：{KifuHeader.PlayerNameWhite}");
+                    sb.AppendLine($"good：{KifuHeader.PlayerNameWhite}");
                     break;
             }
 
-            // その他ヘッダ
+            // Other headers
             foreach (var key in KifuHeader.header_dic.Keys)
             {
                 switch (key)
                 {
-                    case "先手":
-                    case "後手":
-                    case "上手":
-                    case "下手":
-                    case "手合割":
+                    case "First move":
+                    case "Gote":
+                    case "good":
+                    case "poor":
+                    case "Handicap":
                         break;
                     default:
                         sb.AppendLine($"{key}：{KifuHeader.header_dic[key]}");
@@ -568,14 +568,14 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 case BoardType.NoHandicap:
                 case BoardType.Others:
-                    sides = new string[] { "先手", "後手" };
+                    sides = new string[] { "First move", "Gote" };
                     break;
                 default:
-                    sides = new string[] { "下手", "上手" };
+                    sides = new string[] { "poor", "good" };
                     break;
             }
 
-            sb.AppendLine("手数----指手---------消費時間--");
+            sb.AppendLine("Number of steps ---- finger hands --------- time spent--");
 
             var stack = new Stack<Node>();
             bool endNode = false;
@@ -585,12 +585,12 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (endNode)
                 {
                     endNode = false;
-                    // 次の分岐まで巻き戻して、また出力していく。
+                    // Rewind to the next branch and output again.
 
                     var node = stack.Pop();
 
                     sb.AppendLine();
-                    sb.AppendLine($"変化：{node.ply}手");
+                    sb.AppendLine($"change：{node.ply}hand");
 
                     while (node.ply < Tree.gamePly)
                         Tree.UndoMove();
@@ -602,16 +602,16 @@ namespace MyShogi.Model.Shogi.Kifu
                 int count = Tree.currentNode.moves.Count;
                 if (count == 0)
                 {
-                    // ここで指し手終わっとる。終端ノードであるな。
+                    // The move ends here. It's a terminal node.
                     endNode = true;
                     continue;
                 }
 
-                // このnodeの分岐の数
+                // Number of branches in this node
                 if (count != 1)
                 {
-                    // あとで分岐しないといけないので残りをstackに記録しておく
-                    for(int i = 1; i < count; ++i)
+                    // I have to branch later, so record the rest on the stack
+                    for (int i = 1; i < count; ++i)
                         stack.Push(new Node(Tree.gamePly, i));
                 }
 
@@ -623,41 +623,41 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 if (m.IsSpecial())
                 {
-                    // 特殊な指し手なら、それを出力して終わり。
+                    // If it is a special move, output it and finish.
 
                     endNode = true;
 
                     switch (m)
                     {
                         case Move.MATED:
-                            mes = "詰み";
+                            mes = "Checkmate";
                             break;
                         case Move.INTERRUPT:
-                            mes = "中断";
+                            mes = "Suspension";
                             break;
                         case Move.REPETITION_WIN:
-                            mes = "王手連続千日手";
+                            mes = "Checks consecutive Sennichite";
                             break;
                         case Move.REPETITION_DRAW:
-                            mes = "千日手";
+                            mes = "Sennichite";
                             break;
                         case Move.WIN:
-                            mes = "勝ち宣言";
+                            mes = "Declaration of victory";
                             break;
-                        case Move.WIN_THEM: // トライルールに対応するものがKIF形式にないので仕方がない。
-                            mes = "勝ち宣言";
+                        case Move.WIN_THEM: // There is no one corresponding to the try rule in the KIF format, so it can't be helped.
+                            mes = "Declaration of victory";
                             break;
                         case Move.MAX_MOVES_DRAW:
-                            mes = "最大手数超過";
+                            mes = "Exceeding the maximum number of steps";
                             break;
                         case Move.RESIGN:
-                            mes = "投了";
+                            mes = "Abandoned";
                             break;
                         case Move.TIME_UP:
-                            mes = "時間切れ";
+                            mes = "Time out";
                             break;
                         default:
-                            // mes = ""; // これ書き出してしまうと読み込み時に解析できない不正な棋譜になってしまう。注意すべき。
+                            // mes = ""; // If this is written out, it will be an invalid game record that cannot be analyzed at the time of reading. should be careful.
                             //break;
 
                             goto NextMove;
@@ -689,35 +689,35 @@ namespace MyShogi.Model.Shogi.Kifu
                     switch (m)
                     {
                         case Move.RESIGN:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}by hand{sides[Tree.position.sideToMove.Not().ToInt()]}Wins");
                             break;
                         case Move.ILLEGAL_ACTION_WIN:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.Not().ToInt()]}の反則負け");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}by hand{sides[Tree.position.sideToMove.Not().ToInt()]}Foul defeat");
                             break;
                         case Move.ILLEGAL_ACTION_LOSE:
                         case Move.ILLEGAL_MOVE:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.ToInt()]}の反則負け");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}by hand{sides[Tree.position.sideToMove.ToInt()]}Foul defeat");
                             break;
                         case Move.WIN:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.ToInt()]}の勝ち");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}by hand{sides[Tree.position.sideToMove.ToInt()]}Wins");
                             break;
-                        case Move.WIN_THEM: // トライしたので一つ前の手番側の勝ち
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");
+                        case Move.WIN_THEM: // Because I tried, the previous turn side wins
+                            sb.AppendLine($"Until{Tree.gamePly - 1}by hand{sides[Tree.position.sideToMove.Not().ToInt()]}Wins");
                             break;
                         case Move.TIME_UP:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で時間切れにより{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}Due to time out by hand{sides[Tree.position.sideToMove.Not().ToInt()]}Wins");
                             break;
                         case Move.INTERRUPT:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で中断");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}Interrupted by hand");
                             break;
                         case Move.REPETITION_DRAW:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で千日手");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}Sennichite by hand");
                             break;
                         case Move.MAX_MOVES_DRAW:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で持将棋");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}Hand-held shogi");
                             break;
                         case Move.MATED:
-                            sb.AppendLine($"まで{Tree.gamePly - 1}手で詰み");
+                            sb.AppendLine($"Until{Tree.gamePly - 1}Checkmate by hand");
                             break;
                         default:
                             break;

@@ -8,8 +8,8 @@ using MyShogi.Model.Common.Tool;
 namespace MyShogi.Model.Common.Process
 {
     /// <summary>
-    /// 子プロセスを生成して、リダイレクトされた標準入出力経由でやりとりするためのクラス
-    /// ローカルの思考エンジンに接続するときに用いる。
+    /// A class for spawning child processes and interacting via
+    /// redirected standard input / output Used to connect to a local thinking engine.
     /// </summary>
     public class ProcessNegotiator
     {
@@ -46,7 +46,7 @@ namespace MyShogi.Model.Common.Process
 
         #region publics
         /// <summary>
-        /// 思考エンジンに接続する。
+        /// Connect to the thinking engine.
         /// </summary>
         public void Connect(ProcessNegotiatorData engineData)
         {
@@ -77,10 +77,10 @@ namespace MyShogi.Model.Common.Process
                     StartInfo = info,
                 };
 
-                // 子プロセスがいないとき、ここで例外が発生する。
+                // An exception is raised here when there are no child processes.
                 process.Start();
 
-                // 非同期での受信開始
+                // Asynchronous reception start
                 writeStream = process.StandardInput.BaseStream;
                 process.OutputDataReceived += DataReceived;
                 process.BeginOutputReadLine();

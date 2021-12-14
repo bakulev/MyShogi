@@ -483,37 +483,37 @@ namespace MyShogi.Model.Shogi.Converter
                     return kif.ToString();
                 default: return "";
             }
-            // 特殊な指し手
+            // Special move
             if (!move.IsOk())
             {
                 switch (move)
                 {
                     case Move.NONE: kif.Append("NONE"); break;
-                    case Move.NULL: kif.Append("パス"); break;
-                    case Move.RESIGN: kif.Append("投了"); break;
-                    case Move.WIN: kif.Append("入玉宣言"); break;
-                    case Move.WIN_THEM: kif.Append("入玉宣言"); break; // ないので仕方がない
-                    case Move.DRAW: kif.Append("引き分け"); break;
-                    case Move.MATED: kif.Append("詰み"); break;
-                    case Move.REPETITION_DRAW: kif.Append("千日手"); break;
-                    case Move.REPETITION_WIN: kif.Append("連続王手千日手反則勝ち"); break;
-                    case Move.REPETITION_LOSE: kif.Append("連続王手千日手反則負け"); break;
-                    case Move.TIME_UP: kif.Append("時間切れ"); break;
-                    case Move.INTERRUPT: kif.Append("中断"); break;
-                    case Move.MAX_MOVES_DRAW: kif.Append("最大手数引き分け"); break;
-                    case Move.ILLEGAL_MOVE: kif.Append("不正着手負け"); break;
-                    case Move.ILLEGAL_ACTION_LOSE: kif.Append("反則負け"); break;
-                    case Move.ILLEGAL_ACTION_WIN: kif.Append("反則勝ち"); break;
+                    case Move.NULL: kif.Append("path"); break;
+                    case Move.RESIGN: kif.Append("Abandoned"); break;
+                    case Move.WIN: kif.Append("Declaration of jishogi"); break;
+                    case Move.WIN_THEM: kif.Append("Declaration of jishogi"); break; // It can't be helped because there is no
+                    case Move.DRAW: kif.Append("draw"); break;
+                    case Move.MATED: kif.Append("Checkmate"); break;
+                    case Move.REPETITION_DRAW: kif.Append("Sennichite"); break;
+                    case Move.REPETITION_WIN: kif.Append("Consecutive check Sennichite foul win"); break;
+                    case Move.REPETITION_LOSE: kif.Append("Consecutive check Sennichite foul defeat"); break;
+                    case Move.TIME_UP: kif.Append("Time out"); break;
+                    case Move.INTERRUPT: kif.Append("Suspension"); break;
+                    case Move.MAX_MOVES_DRAW: kif.Append("Maximum number of draws"); break;
+                    case Move.ILLEGAL_MOVE: kif.Append("Unauthorized start"); break;
+                    case Move.ILLEGAL_ACTION_LOSE: kif.Append("Foul defeat"); break;
+                    case Move.ILLEGAL_ACTION_WIN: kif.Append("Foul win"); break;
                 }
             }
             else
             {
-                // 普通の指し手
+                // Ordinary move
                 var moveInfo = new KifMoveInfo(pos, move);
                 var fromPieceType = moveInfo.fromPt;
-                // 移動元駒種
+                // Move source piece type
                 kif.Append(PIECE_KIF[fromPieceType.ToInt()]);
-                // 移動元表記など
+                // Move source notation etc.
                 switch (opt.fromsq) {
                     case FromSqFormat.NONE:
                         break;
@@ -521,16 +521,17 @@ namespace MyShogi.Model.Shogi.Converter
                     {
                         if (move.IsDrop())
                         {
-                            // KIF形式では持駒からの着手は必ず"打"と表記する
-                            kif.Append("打");
+                                // In the KIF format, the start from the possession piece
+                                // is always written as "hit".
+                                kif.Append("Hit");
                             break;
                         }
                         if (move.IsPromote())
                         {
-                            kif.Append("成");
-                            // KIF形式では"不成"表記しない
-                        }
-                        kif.AppendFormat("({0}{1})",
+                            kif.Append("Naru");
+                                // Do not write "unsuccessful" in KIF format
+                            }
+                            kif.AppendFormat("({0}{1})",
                             HW_NUMBER[move.From().ToFile().ToInt()],
                             HW_NUMBER[move.From().ToRank().ToInt()]
                         );
@@ -544,30 +545,30 @@ namespace MyShogi.Model.Shogi.Converter
                         {
                             if (opt.fromsq != FromSqFormat.KI2 || moveInfo.drop == KifMoveInfo.Drop.EXPLICIT)
                             {
-                                // KI2では紛らわしくない場合、"打"と表記しない。
-                                kif.Append("打");
+                                    // If it is not confusing in KI2, it is not written as "hit".
+                                    kif.Append("Hit");
                             }
                             break;
                         }
                         switch (moveInfo.relative)
                         {
-                            case KifMoveInfo.Relative.LEFT:     kif.Append("左"); break;
-                            case KifMoveInfo.Relative.STRAIGHT: kif.Append("直"); break;
-                            case KifMoveInfo.Relative.RIGHT:    kif.Append("右"); break;
+                            case KifMoveInfo.Relative.LEFT:     kif.Append("left"); break;
+                            case KifMoveInfo.Relative.STRAIGHT: kif.Append("straight"); break;
+                            case KifMoveInfo.Relative.RIGHT:    kif.Append("right"); break;
                         }
                         switch (moveInfo.behavior)
                         {
-                            case KifMoveInfo.Behavior.FORWARD:  kif.Append("上"); break;
-                            case KifMoveInfo.Behavior.SLIDE:    kif.Append("寄"); break;
-                            case KifMoveInfo.Behavior.BACKWARD: kif.Append("引"); break;
+                            case KifMoveInfo.Behavior.FORWARD:  kif.Append("Up"); break;
+                            case KifMoveInfo.Behavior.SLIDE:    kif.Append("Yori"); break;
+                            case KifMoveInfo.Behavior.BACKWARD: kif.Append("Pull"); break;
                         }
                         if (move.IsPromote())
                         {
-                            kif.Append("成");
+                            kif.Append("Naru");
                         }
                         else if (moveInfo.promote == KifMoveInfo.Promote.NOPROMOTE)
                         {
-                            kif.Append("不成");
+                            kif.Append("Failure");
                         }
                         if (opt.fromsq == FromSqFormat.Verbose && !move.IsDrop())
                         {
@@ -581,38 +582,39 @@ namespace MyShogi.Model.Shogi.Converter
                     default:
                         throw new ConverterException();
                 }
-                // 移動先座標
+                // Destination coordinates
                 if (moveInfo.same)
                 {
-                    // 一つ前の指し手の移動先と、今回の移動先が同じ場合、"同"金のように表示する。
+                    // If the destination of the previous move and the destination
+                    // of this move are the same, it will be displayed as "same" money.
                     switch (opt.samepos)
                     {
                         case SamePosFormat.NONE:
                             break;
                         case SamePosFormat.ZEROsp:
-                            kif.Insert(0, "同");
+                            kif.Insert(0, "same");
                             break;
-                        // KIF形式では"同"の後に全角空白
+                        // In KIF format, double-byte space after "same"
                         case SamePosFormat.KIFsp:
-                            kif.Insert(0, "同　");
+                            kif.Insert(0, "same　");
                             break;
-                        // KI2形式では長い表記の時に空白を詰める
+                        // In KI2 format, fill in blanks when writing long
                         case SamePosFormat.KI2sp: {
                             switch (opt.fromsq)
                             {
                                 case FromSqFormat.KIF:
                                 case FromSqFormat.Verbose:
-                                    kif.Insert(0, kif.Length > 5 ? "同" : "同　");
+                                    kif.Insert(0, kif.Length > 5 ? "same" : "same　");
                                     break;
                                 default:
-                                    kif.Insert(0, kif.Length > 1 ? "同" : "同　");
+                                    kif.Insert(0, kif.Length > 1 ? "same" : "same　");
                                     break;
                             }
                             break;
                         }
-                        // 座標 + "同"
+                        // Coordinate  + "same"
                         case SamePosFormat.Verbose:
-                            kif.Insert(0, opt.format(move.To()) + "同");
+                            kif.Insert(0, opt.format(move.To()) + "same");
                             break;
                         default:
                             throw new ConverterException();
@@ -623,7 +625,7 @@ namespace MyShogi.Model.Shogi.Converter
                     kif.Insert(0, opt.format(move.To()));
                 }
             }
-            // 手番表示
+            // Turn display
             kif.Insert(0, opt.format(pos.sideToMove));
 
             return kif.ToString();
@@ -1056,8 +1058,8 @@ namespace MyShogi.Model.Shogi.Converter
         }
 
         /// <summary>
-        /// ある指し手をKIF形式で出力する
-        /// Move.ToSfen()のKIF版
+        /// KIF version of Move.ToSfen ()
+        /// that outputs a move in KIF format
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="move"></param>

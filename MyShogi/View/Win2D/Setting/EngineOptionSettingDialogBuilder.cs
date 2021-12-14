@@ -60,7 +60,7 @@ namespace MyShogi.View.Win2D
                     var ex = engine.Engine.Exception;
                     if (ex != null)
                     {
-                        // タイムアウトでも例外が飛んでくるはず…。
+                        // Exceptions should fly even if the timeout occurs ...
                         TheApp.app.MessageShow(ex.Pretty() , MessageShowType.Error);
                         return null;
                     }

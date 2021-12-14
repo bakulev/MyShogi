@@ -12,95 +12,95 @@ using MyShogi.View.Win2D.Setting;
 namespace MyShogi.View.Win2D
 {
     /// <summary>
-    /// 対局盤面などがあるメインウィンドゥ
+    /// Main window with game board etc.
     ///
-    /// メニュー関連だけをこのファイルに切り離してある。
+    /// Only menu related items are separated into this file.
     /// </summary>
     public partial class MainDialog : Form
     {
         /// <summary>
-        /// [UI thread] : メニューのitemを動的に追加する。
-        /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
+        /// [UI thread] : Dynamically add menu items.
+        /// The menu is different between the commercial version and the freeware version, so you need to add it dynamically here.
         /// </summary>
         public void UpdateMenuItems(PropertyChangedEventArgs args = null)
         {
-            // 頑張れば高速化出来るが、対局中はこのメソッド呼び出されていないし、
-            // ToolStripも、CPU×CPUの対局中は更新は発生していないし、
-            // CPU×人間のときは多少遅くても誤差だし、まあいいか…。
+            // If you do your best, you can speed up, but this method is not called during the game,
+            // ToolStrip has not been updated during the CPU x CPU game, and
+            // When it's CPU x human, it's an error even if it's a little slow, so it's okay ...
 
             var config = TheApp.app.Config;
             var shortcut = TheApp.app.KeyShortcut;
-            shortcut.InitEvent1(); // このdelegateにShortcutキーのハンドラを登録していく。
+            shortcut.InitEvent1(); // Register the handler for the Shortcut key in this delegate.
 
-            // 使ったファイル名をメインウインドウのText部に描画する必要がある。
+            // It is necessary to draw the used file name in the Text part of the main window.
             UpdateCaption();
 
-            // -- メニューの追加。
+            // -- Add menu.
             {
-                // MenuStripだと非アクティブ状態からのクリックで反応しないのでMenuStripExを使う。
+                // If it is MenuStrip, it does not respond to clicks from the inactive state, so use MenuStripEx.
                 var menu = new MenuStripEx();
 
-                // -- LocalGameServerの各フラグ。
-                // ただし、初期化時にgameServer == nullで呼び出されることがあるのでnull checkが必要。
+                // -- LocalGameServer flags.
+                // However, null check is required because it may be called with gameServer == null at initialization.
 
-                // LocalGameServer.GameModeは値がいま書き換わっている可能性があるので、イベントを除かしてしまう可能性がある。
-                // ゆえに、引数で渡ってきたargs.value (GameModeEnum)を用いる必要があるが、しかし、args.valueが他の型である可能性もある。(BoardReverseなどを渡すとき)
-                // このため、args.valueがGameModeEnumなら、これを用いて、さもなくば仕方ないので前回渡されたものをそのまま用いる。
-                // (LocalGameServerの値はメニューには直接使わない)
+                // LocalGameServer.GameMode may have the value rewritten now, so it may exclude the event.
+                // Therefore, it is necessary to use args.value (GameModeEnum) passed as an argument, but it is possible that args.value is another type. (When passing Board Reverse etc.)
+                // Therefore, if args.value is GameModeEnum, use this, otherwise it can't be helped, so the one passed last time is used as it is.
+                // (LocalGameServer values are not used directly in menus)
                 var gameMode =
                     (args != null && args.value != null && args.value is GameModeEnum) ? (GameModeEnum)args.value :
                     gameServer == null ? GameModeEnum.NotInit :
                     lastGameMode;
                 lastGameMode = gameMode;
 
-                // 検討モード(通常エンジン)
+                // Exam mode (normal engine)
                 var consideration = gameMode == GameModeEnum.ConsiderationWithEngine;
-                // 検討モード(詰将棋用)
+                // Examination mode (for Tsume Shogi)
                 var mate_consideration = gameMode == GameModeEnum.ConsiderationWithMateEngine;
-                // 対局中
+                // During the game
                 var inTheGame = gameMode == GameModeEnum.InTheGame;
-                // 盤面編集中
+                // Editing the board
                 var inTheBoardEdit = gameMode == GameModeEnum.InTheBoardEdit;
-                // 盤面反転
+                // Board surface reversal
                 var boardReverse = gameServer == null ? false : gameServer.BoardReverse;
 
                 var item_file = new ToolStripMenuItem();
-                item_file.Text = "ファイル(&F)";
+                item_file.Text = "File (& F)";
                 menu.Items.Add(item_file);
 
-                // 対局中などは、ファイルメニュー項目は丸ごと無効化
+                // Disable the entire file menu item during a game, etc.
                 item_file.Enabled = gameMode == GameModeEnum.ConsiderationWithoutEngine;
 
-                // -- 「ファイル」配下のメニュー
+                // --Menu under "File"
                 {
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "棋譜を開く(&O)";
+                        item.Text = "Open the game record (& O)";
                         item.ShortcutKeys = Keys.Control | Keys.O;
-                        // サブウインドウでのショートカットキーの処理
+                        // Processing shortcut keys in subwindows
                         shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
                         {
                             using (var fd = new OpenFileDialog())
                             {
-                                    // [ファイルの種類]に表示される選択肢を指定する
-                                    // 指定しないとすべてのファイルが表示される
-                                    fd.Filter = string.Join("|", new string[]
+                                // Specify the choices that appear
+                                // in File Types If not specified, all files are displayed
+                                fd.Filter = string.Join("|", new string[]
                                     {
-                                "棋譜ファイル|*.kif;*.kifu;*.ki2;*.kif2;*.ki2u;*.kif2u;*.csa;*.psn;*.psn2;*.sfen;*.json;*.jkf;*.txt",
-                                "KIF形式|*.kif;*.kifu",
-                                "KIF2形式|*.ki2;*.kif2;*.ki2u;*.kif2u",
-                                "CSA形式|*.csa",
-                                "PSN形式|*.psn",
-                                "PSN2形式|*.psn2",
-                                "SFEN形式|*.sfen",
-                                "すべてのファイル|*.*",
+                                "Game record file|*.kif;*.kifu;*.ki2;*.kif2;*.ki2u;*.kif2u;*.csa;*.psn;*.psn2;*.sfen;*.json;*.jkf;*.txt",
+                                "KIF format|*.kif;*.kifu",
+                                "KIF2 format|*.ki2;*.kif2;*.ki2u;*.kif2u",
+                                "CSA format|*.csa",
+                                "PSN format|*.psn",
+                                "PSN2 format|*.psn2",
+                                "SFEN format|*.sfen",
+                                "All files|*.*",
                                     });
                                 fd.FilterIndex = 1;
-                                fd.Title = "開く棋譜ファイルを選択してください";
+                                fd.Title = "Select the game record file to open";
 
-                                    // ダイアログを表示する
-                                    if (fd.ShowDialog() == DialogResult.OK)
+                                // Display a dialog
+                                if (fd.ShowDialog() == DialogResult.OK)
                                     ReadKifuFile(fd.FileName);
                             }
                         };
@@ -109,29 +109,29 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "棋譜の上書き保存(&S)";
+                        item.Text = "Overwrite save of game record (& S)";
                         item.ShortcutKeys = Keys.Control | Keys.S;
-                        // サブウインドウでのショートカットキーの処理
+                        // サHandling of shortcut keys in the window
                         shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
-                        item.Enabled = ViewModel.LastFileName != null; // 棋譜を読み込んだ時などにしか有効ではない。
+                        item.Enabled = ViewModel.LastFileName != null; // It is effective only when reading a game record.
                         item.Click += (sender, e) =>
                         {
                             var path = ViewModel.LastFileName;
 
-                                // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
-                                // 「局面の保存」は棋譜ではないのでこれは無視する。
-                                // ファイル形式は、拡張子から自動判別する。
-                                gameServer.KifuWriteCommand(path, KifuFileTypeExtensions.StringToKifuFileType(path));
+                            // "Open" or "Save As" Overwrites an unsaved file.
+                            // "Preservation of the aspect" is not a game record, so ignore it.
+                            // The file format is automatically determined from the extension.
+                            gameServer.KifuWriteCommand(path, KifuFileTypeExtensions.StringToKifuFileType(path));
 
-                                //UseKifuFile(path);
-                                // 上書き保存の直前にこのファイルを開いていて、そのときにMRUFに記録されているはず。
-                            };
+                            //UseKifuFile(path);
+                            // You should have opened this file just before overwriting and it should have been recorded in MRUF at that time.
+                        };
                         item_file.DropDownItems.Add(item);
                     }
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "棋譜に名前をつけて保存(&N)";
+                        item.Text = "Save the game record as (& N)";
                         item.ShortcutKeys = Keys.Control | Keys.S | Keys.Shift;
                         shortcut.AddEvent1( e => { if (e.Modifiers == (Keys.Control | Keys.Shift) && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
@@ -139,21 +139,20 @@ namespace MyShogi.View.Win2D
                             using (var fd = new SaveFileDialog())
                             {
 
-                                    // [ファイルの種類]に表示される選択肢を指定する
-                                    // 指定しないとすべてのファイルが表示される
-                                    fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
-                                        + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
-                                        + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                                // Specify the choices that appear in File Types If not specified, all files are displayed
+                                fd.Filter = "KIF format(*.KIF)|*.KIF|KIF2 format(*.KI2)|*.KI2|CSA format(*.CSA)|*.CSA"
+                                        + "|PSN format(*.PSN)|*.PSN|PSN2 format(*.PSN2)|*.PSN2"
+                                        + "|SFEN format(*.SFEN)|*.SFEN|All files(*.*)|*.*";
                                 fd.FilterIndex = 1;
-                                fd.Title = "棋譜を保存するファイル形式を選択してください";
-                                    // デフォルトでは、先手名 + 後手名 + YYYYMMDDhhmmss.kif
-                                    // 柿木やkifu for Windowsがこの形式らしい。
-                                    var default_filename = $"{gameServer.DefaultKifuFileName()}.KIF";
+                                fd.Title = "Select the file format to save the game record";
+                                // By default, first move + second move + YYYYMMDDhhmmss.kif
+                                // Kakinoki and kifu for Windows seem to be in this format.
+                                var default_filename = $"{gameServer.DefaultKifuFileName()}.KIF";
                                 fd.FileName = default_filename;
-                                    // これでescapeされているし、ダイアログが使えないファイル名は返さないから、以降のescapeは不要。
+                                // Since it is escaped with this and the file name that the dialog cannot be used is not returned, the subsequent escape is unnecessary.
 
-                                    // ダイアログを表示する
-                                    if (fd.ShowDialog() == DialogResult.OK)
+                                // Display a dialog
+                                if (fd.ShowDialog() == DialogResult.OK)
                                 {
                                     var path = fd.FileName;
                                     try
@@ -168,21 +167,21 @@ namespace MyShogi.View.Win2D
                                             case 5: kifuType = KifuFileType.PSN2; break;
                                             case 6: kifuType = KifuFileType.SFEN; break;
 
-                                                // ファイル名から自動判別すべき
-                                                default:
+                                            // Should be automatically determined from the file name
+                                            default:
                                                 kifuType = KifuFileTypeExtensions.StringToKifuFileType(path);
                                                 if (kifuType == KifuFileType.UNKNOWN)
-                                                    kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                                    break;
+                                                    kifuType = KifuFileType.KIF; // I don't know, KIF format is fine.
+                                                break;
                                         }
 
                                         gameServer.KifuWriteCommand(path, kifuType);
-                                        ViewModel.LastFileName = path; // 最後に保存したファイルを記録しておく。
-                                            UseKifuFile(path);
+                                        ViewModel.LastFileName = path; // Record the last saved file.
+                                        UseKifuFile(path);
                                     }
                                     catch
                                     {
-                                        TheApp.app.MessageShow("ファイル書き出しエラー", MessageShowType.Error);
+                                        TheApp.app.MessageShow("File export error", MessageShowType.Error);
                                     }
                                 }
                             }
@@ -192,22 +191,21 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "局面の保存(&I)"; // Pは印刷(Print)で使いたいため、positionの"I"をショートカットキーにする。
+                        item.Text = "Preservation of aspects (& I)"; // Since P wants to be used for printing, use "I" in position as a shortcut key.
                         item.Click += (sender, e) =>
                         {
                             using (var fd = new SaveFileDialog())
                             {
 
-                                    // [ファイルの種類]に表示される選択肢を指定する
-                                    // 指定しないとすべてのファイルが表示される
-                                    fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
-                                        + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
-                                        + "|SFEN形式(*.SFEN)|*.SFEN|SVG形式(*.SVG)|*.SVG|すべてのファイル(*.*)|*.*";
+                                // Specify the choices that appear in File Types If not specified, all files are displayed
+                                fd.Filter = "KIF format(*.KIF)|*.KIF|KIF2 format(*.KI2)|*.KI2|CSA format(*.CSA)|*.CSA"
+                                        + "|PSN format(*.PSN)|*.PSN|PSN2 format(*.PSN2)|*.PSN2"
+                                        + "|SFEN format(*.SFEN)|*.SFEN|SVG format(*.SVG)|*.SVG|All files(*.*)|*.*";
                                 fd.FilterIndex = 1;
-                                fd.Title = "局面を保存するファイル形式を選択してください";
+                                fd.Title = "Select the file format to save the aspect";
 
-                                    // ダイアログを表示する
-                                    if (fd.ShowDialog() == DialogResult.OK)
+                                // Display a dialog
+                                if (fd.ShowDialog() == DialogResult.OK)
                                 {
                                     var path = fd.FileName;
                                     try
@@ -223,22 +221,22 @@ namespace MyShogi.View.Win2D
                                             case 6: kifuType = KifuFileType.SFEN; break;
                                             case 7: kifuType = KifuFileType.SVG; break;
 
-                                                // ファイル名から自動判別すべき
-                                                default:
+                                            // Should be automatically determined from the file name
+                                            default:
                                                 kifuType = KifuFileTypeExtensions.StringToKifuFileType(path);
                                                 if (kifuType == KifuFileType.UNKNOWN)
-                                                    kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                                    break;
+                                                    kifuType = KifuFileType.KIF; // I don't know, KIF format is fine.
+                                                break;
                                         }
 
                                         gameServer.PositionWriteCommand(path, kifuType);
 
-                                            // このファイルを用いたのでMRUFに記録しておく。
-                                            UseKifuFile(path);
+                                        // Since this file was used, record it in MRUF.
+                                        UseKifuFile(path);
                                     }
                                     catch
                                     {
-                                        TheApp.app.MessageShow("ファイル書き出しエラー", MessageShowType.Error);
+                                        TheApp.app.MessageShow("File export error", MessageShowType.Error);
                                     }
                                 }
                             }
@@ -250,66 +248,66 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "クリップボードに棋譜/局面をコピー(&C)";
+                        item.Text = "Copy game record / plaque to clipboard (& C)";
 
                         var itemk1 = new ToolStripMenuItem();
-                        itemk1.Text = "棋譜KIF形式(&1)";
+                        itemk1.Text = "Game record KIF format (& 1)";
                         itemk1.ShortcutKeys = Keys.Control | Keys.C;
                         shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) { item.PerformClick(); e.Handled = true; } });
 
-                        // このショートカットキーを設定すると対局中などにも書き出せてしまうが、書き出しはまあ問題ない。
+                        // If you set this shortcut key, you can export it even during a game, but there is no problem with exporting.
                         itemk1.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KIF); };
                         item.DropDownItems.Add(itemk1);
 
                         var itemk2 = new ToolStripMenuItem();
-                        itemk2.Text = "棋譜KI2形式(&2)";
+                        itemk2.Text = "Game record KI2 format(&2)";
                         itemk2.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KI2); };
                         item.DropDownItems.Add(itemk2);
 
                         var itemk3 = new ToolStripMenuItem();
-                        itemk3.Text = "棋譜CSA形式(&3)";
+                        itemk3.Text = "Game record CSA format(&3)";
                         itemk3.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.CSA); };
                         item.DropDownItems.Add(itemk3);
 
                         var itemk4 = new ToolStripMenuItem();
-                        itemk4.Text = "棋譜SFEN形式(&4)";
+                        itemk4.Text = "Game record SFEN format(&4)";
                         itemk4.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.SFEN); };
                         item.DropDownItems.Add(itemk4);
 
                         var itemk5 = new ToolStripMenuItem();
-                        itemk5.Text = "棋譜PSN形式(&5)";
+                        itemk5.Text = "Game record PSN format(&5)";
                         itemk5.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.PSN); };
                         item.DropDownItems.Add(itemk5);
 
                         var itemk6 = new ToolStripMenuItem();
-                        itemk6.Text = "棋譜PSN2形式(&6)";
+                        itemk6.Text = "Game record PSN2 format(&6)";
                         itemk6.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.PSN2); };
                         item.DropDownItems.Add(itemk6);
 
                         item.DropDownItems.Add(new ToolStripSeparator());
 
                         var itemp1 = new ToolStripMenuItem();
-                        itemp1.Text = "局面KIF(BOD)形式(&A)";
+                        itemp1.Text = "aspect KIF(BOD) format(&A)";
                         itemp1.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.KI2); };
                         item.DropDownItems.Add(itemp1);
 
                         var itemp2 = new ToolStripMenuItem();
-                        itemp2.Text = "局面CSA形式(&B)";
+                        itemp2.Text = "aspect CSA format(&B)";
                         itemp2.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.CSA); };
                         item.DropDownItems.Add(itemp2);
 
                         var itemp3 = new ToolStripMenuItem();
-                        itemp3.Text = "局面SFEN形式(&C)";
+                        itemp3.Text = "aspect SFEN format(&C)";
                         itemp3.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.SFEN); };
                         item.DropDownItems.Add(itemp3);
 
                         var itemp4 = new ToolStripMenuItem();
-                        itemp4.Text = "局面PSN形式(&D)";
+                        itemp4.Text = "aspect PSN format(&D)";
                         itemp4.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.PSN); };
                         item.DropDownItems.Add(itemp4);
 
                         var itemp5 = new ToolStripMenuItem();
-                        itemp5.Text = "局面PSN2形式(&E)";
+                        itemp5.Text = "aspect PSN2 format(&E)";
                         itemp5.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.PSN2); };
                         item.DropDownItems.Add(itemp5);
 
@@ -318,9 +316,9 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "クリップボードから棋譜/局面を貼り付け(&P)";
-                        // このショートカットキーを設定すると対局中などにも貼り付けが出来てしまうが、
-                        // GameModeを見て、対局中などには処理しないようにしてある。
+                        item.Text = "Paste game record / plaque from clipboard (& P)";
+                        // If you set this shortcut key, you can paste it even during a game,
+                        // but by looking at GameMode, it is not processed during a game.
                         item.ShortcutKeys = Keys.Control | Keys.V;
                         shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) => { CopyFromClipboard(); };
@@ -331,12 +329,12 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "終了(&X)";
+                        item.Text = "End (& X)";
                         item.Click += (sender, e) => { TheApp.app.ApplicationExit(); };
                         item_file.DropDownItems.Add(item);
                     }
 
-                    // MRUF : 最近使ったファイル
+                    // MRUF : Recently used files
 
                     {
                         var mruf = TheApp.app.Config.MRUF;
@@ -352,7 +350,7 @@ namespace MyShogi.View.Win2D
                             else if (i == 3)
                             {
                                 sub_item = new ToolStripMenuItem();
-                                sub_item.Text = "ファイルヒストリーのつづき(&R)";
+                                sub_item.Text = "File history continuation (& R)";
                                 item_file.DropDownItems.Add(sub_item);
                             }
 
@@ -367,13 +365,13 @@ namespace MyShogi.View.Win2D
                                     sub_item.DropDownItems.Add(item);
                             }
 
-                            if (i == mruf.Files.Count - 1) // 最後の要素
+                            if (i == mruf.Files.Count - 1) // Last element
                             {
                                 var item = new ToolStripMenuItem();
-                                item.Text = "ファイルヒストリーのクリア(&T)";
+                                item.Text = "Clear file history (& T)";
                                 item.Click += (sender, e) =>
                                 {
-                                    if (TheApp.app.MessageShow("ファイルヒストリーをクリアしますか？「OK」を押すとクリアされます。", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
+                                    if (TheApp.app.MessageShow("Do you want to clear the file history? Click \"OK\" to clear it.", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
                                     {
                                         mruf.Clear();
                                         UpdateMenuItems();
@@ -386,15 +384,15 @@ namespace MyShogi.View.Win2D
                 }
 
                 var item_playgame = new ToolStripMenuItem();
-                item_playgame.Text = "対局(&P)"; // PlayGame
-                item_playgame.Enabled = gameServer != null && !gameServer.InTheGame; // 対局中はこのメニューを無効化
+                item_playgame.Text = "Game (& P)"; // PlayGame
+                item_playgame.Enabled = gameServer != null && !gameServer.InTheGame; // Disable this menu during the game
                 menu.Items.Add(item_playgame);
 
-                // -- 「対局」配下のメニュー
+                // -- Menu under "Game"
                 {
-                    { // -- 通常対局
+                    { // -- Normal game
                         var item = new ToolStripMenuItem();
-                        item.Text = "通常対局(&N)"; // NormalGame
+                        item.Text = "Normal game (& N)"; // NormalGame
                         item.ShortcutKeys = Keys.Control | Keys.N; // NewGameのN
                         shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.N) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
@@ -402,7 +400,7 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new GameSettingDialog(this))
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
-                                dialog.ShowDialog(this); // Modal Dialogにしておく。
+                                dialog.ShowDialog(this); // Keep it in Modal Dialog.
                             }
                         };
 
@@ -411,58 +409,58 @@ namespace MyShogi.View.Win2D
 
                     item_playgame.DropDownItems.Add(new ToolStripSeparator());
 
-                    { // -- 検討モード
+                    { // -- Review mode
 
                         var item = new ToolStripMenuItem();
-                        item.Text = consideration ? "検討モードを終了する(&C)" : "検討エンジン設定(&C)"; // ConsiderationMode
+                        item.Text = consideration ? "Exit Review Mode (& C) " : " Review Engine Settings (& C)"; // ConsiderationMode
 
-                        // toolStripのボタンのテキストを検討モードであるかどうかにより変更する。
-                        toolStripButton5.Text = consideration ? "終" : "検";
-                        toolStripButton5.ToolTipText = consideration ? "検討モードを終了します。" : "検討モードに入ります。";
+                        // toolStrip button text changes depending on whether it is in review mode.
+                        toolStripButton5.Text = consideration ? "The end" : "Inspection";
+                        toolStripButton5.ToolTipText = consideration ? "Exit the review mode." : "Enter review mode.";
                         toolStripButton5.Enabled = !inTheGame;
                         item.Click += (sender, e) =>
                         {
                             if (consideration)
-                                ToggleConsideration(); // 検討モードを終了させる
-                                else
-                                ShowConsiderationEngineSettingDialog(); // 検討エンジンの選択画面に
-                            };
+                                ToggleConsideration(); // Exit review mode
+                            else
+                                ShowConsiderationEngineSettingDialog(); // On the examination engine selection screen
+                        };
 
                         item_playgame.DropDownItems.Add(item);
                     }
 
 
-                    // 「解」ボタン : 棋譜解析
+                    // "Solution" button: Game record analysis
                     //toolStripButton6.Enabled = !inTheGame;
 
-                    { // -- 検討モード
+                    { // -- Review mode
 
                         var item = new ToolStripMenuItem();
-                        item.Text = mate_consideration ? "詰検討モードを終了する(&M)" : "詰検討エンジン設定(&M)"; // MateMode
+                        item.Text = mate_consideration ? "Exit the jamming review mode (& M)" : "Check engine setting (& M)"; // MateMode
 
-                        // toolStripのボタンのテキストを検討モードであるかどうかにより変更する。
-                        toolStripButton7.Text = mate_consideration ? "終" : "詰";
-                        toolStripButton7.ToolTipText = mate_consideration ? "詰検討モードを終了します。" : "詰検討モードに入ります。";
-                        // 「詰」ボタン : 詰将棋ボタン
+                        // toolStrip button text changes depending on whether it is in review mode.
+                        toolStripButton7.Text = mate_consideration ? "The end" : "Stuff";
+                        toolStripButton7.ToolTipText = mate_consideration ? "Exits the jamming review mode." : "Enter the jamming review mode.";
+                        // "Tsume" button: Tsume shogi button
                         toolStripButton7.Enabled = !inTheGame;
                         item.Click += (sender, e) =>
                         {
                             if (mate_consideration)
                                 ToggleMateConsideration();
                             else
-                                ShowMateEngineSettingDialog(); // 詰検討エンジンの選択画面に
+                                ShowMateEngineSettingDialog(); // On the selection screen of the engine
 
-                            };
+                        };
 
                         item_playgame.DropDownItems.Add(item);
                     }
 
                     item_playgame.DropDownItems.Add(new ToolStripSeparator());
 
-                    { // -- 対局結果一覧
+                    { // -- List of game results
 
                         var item_ = new ToolStripMenuItem();
-                        item_.Text = "対局結果一覧(&R)"; // game Result
+                        item_.Text = "Game result list (& R)"; // game Result
                         item_.Click += (sender, e) =>
                         {
                             using (var dialog = new GameResultDialog())
@@ -470,7 +468,7 @@ namespace MyShogi.View.Win2D
                                 dialog.ViewModel.AddPropertyChangedHandler("KifuClicked", (args_) =>
                                 {
                                     var filename = (string)args_.value;
-                                    // このファイルを読み込む。
+                                    // Read this file.
                                     var path = Path.Combine(TheApp.app.Config.GameResultSetting.KifuSaveFolder, filename);
                                     try
                                     {
@@ -478,7 +476,7 @@ namespace MyShogi.View.Win2D
                                     }
                                     catch
                                     {
-                                        TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
+                                        TheApp.app.MessageShow("The game record file could not be read.", MessageShowType.Error);
                                     }
                                 });
 
@@ -491,10 +489,10 @@ namespace MyShogi.View.Win2D
                     }
 
 
-                    { // -- 対局結果の保存設定
+                    { // -- Setting to save game results
 
                         var item_ = new ToolStripMenuItem();
-                        item_.Text = "対局結果の保存設定(&S)"; // アルファベット的にRの次
+                        item_.Text = "Game result save settings (& S)"; // Alphabetically next to R
                         item_.Click += (sender, e) =>
                         {
                             using (var dialog = new GameResultWindowSettingDialog())
@@ -509,14 +507,14 @@ namespace MyShogi.View.Win2D
 
                 }
 
-                // 「設定」
+                // "Configuration"
                 var item_settings = new ToolStripMenuItem();
-                item_settings.Text = "設定(&S)"; // Settings
+                item_settings.Text = "Settings (& S)"; // Settings
                 menu.Items.Add(item_settings);
                 {
                     var item = new ToolStripMenuItem();
-                    item.Text = "音声設定 (&S)"; // Sound setting
-                    item.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
+                    item.Text = "Audio settings (& S)"; // Sound setting
+                    item.Enabled = config.CommercialVersion != 0; // Only commercial version can be selected
                     item.Click += (sender, e) =>
                     {
                         using (var dialog = new SoundSettingDialog())
@@ -530,7 +528,7 @@ namespace MyShogi.View.Win2D
 
                 {
                     var item = new ToolStripMenuItem();
-                    item.Text = "表示設定 (&D)"; // Display setting
+                    item.Text = "Display settings (& D)"; // Display setting
                     item.Click += (sender, e) =>
                     {
                         using (var dialog = new DisplaySettingDialog())
@@ -544,7 +542,7 @@ namespace MyShogi.View.Win2D
 
                 {
                     var item = new ToolStripMenuItem();
-                    item.Text = "操作設定 (&O)"; // Operation setting
+                    item.Text = "Operation settings (& O)"; // Operation setting
                     item.Click += (sender, e) =>
                     {
                         using (var dialog = new OperationSettingDialog())
@@ -557,10 +555,10 @@ namespace MyShogi.View.Win2D
                 }
 
 #if false 
-                // これ、使わない。一般ユーザー向けのソフトとしてわかりにくくなる。               
+                // I don't use this. It becomes difficult to understand as software for general users.            
                 {
                     var item = new ToolStripMenuItem();
-                    item.Text = "エンジン補助設定 (&E)"; // Engine Subsetting
+                    item.Text = "Engine auxiliary setting (& E)"; // Engine Subsetting
                     item.Click += (sender, e) =>
                     {
                         using (var dialog = new EngineSubSettingDialog())
@@ -575,10 +573,10 @@ namespace MyShogi.View.Win2D
 
                 item_settings.DropDownItems.Add(new ToolStripSeparator());
 
-                // -- 外部思考エンジンの追加(engine_define.xmlの編集)
+                // -- Adding an external thinking engine (editing engine_define.xml)
                 {
                     var item_edit_engine_define = new ToolStripMenuItem();
-                    item_edit_engine_define.Text = "外部思考エンジンの利用(&U)";
+                    item_edit_engine_define.Text = "Use of external thinking engine (& U)";
                     item_edit_engine_define.Click += (sender, e) =>
                     {
                         using (var dialog = new EngineDefineEditDialog())
@@ -591,18 +589,18 @@ namespace MyShogi.View.Win2D
                 }
 
 
-                // -- 設定の初期化
+                // -- Initialize settings
                 {
                     var item_init = new ToolStripMenuItem();
-                    item_init.Text = "設定の初期化(&I)";
+                    item_init.Text = "Initialize settings (& I)";
                     item_settings.DropDownItems.Add(item_init);
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "各エンジン設定の初期化(&E)";
+                        item.Text = "Initialization of each engine setting (& E)";
                         item.Click += (sender, e) =>
                         {
-                            if (TheApp.app.MessageShow("すべてのエンジン設定を初期化しますか？「OK」を押すと初期化され、次回起動時に反映されます。", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
+                            if (TheApp.app.MessageShow("Do you want to initialize all engine settings? Click \"OK\" to initialize it and reflect it at the next startup.", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
                             {
                                 TheApp.app.DeleteEngineOption = true;
                             }
@@ -612,10 +610,10 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "各表示設定などの初期化(&D)";
+                        item.Text = "Initialization of each display setting (& D)";
                         item.Click += (sender, e) =>
                         {
-                            if (TheApp.app.MessageShow("すべての表示設定・音声設定を初期化しますか？「OK」を押すと初期化され、次回起動時に反映されます。", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
+                            if (TheApp.app.MessageShow("Do you want to initialize all display settings and audio settings? Click \"OK\" to initialize it and reflect it at the next startup.", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
                             {
                                 TheApp.app.DeleteGlobalOption = true;
                             }
@@ -626,15 +624,15 @@ namespace MyShogi.View.Win2D
 
 
                 var item_boardedit = new ToolStripMenuItem();
-                item_boardedit.Text = "盤面編集(&E)"; // board Edit
+                item_boardedit.Text = "Board editing (& E)"; // board Edit
                 item_boardedit.Enabled = !inTheGame;
                 menu.Items.Add(item_boardedit);
 
-                // 盤面編集の追加
+                // Addition of board editing
                 {
-                    {   // -- 盤面編集の開始
+                    {   // -- Start of board editing
                         var item = new ToolStripMenuItem();
-                        item.Text = inTheBoardEdit ? "盤面編集の終了(&B)" : "盤面編集の開始(&B)"; // Board edit
+                        item.Text = inTheBoardEdit ? "End of board editing (& B)" : "Start of board editing (& B)"; // Board edit
                         item.ShortcutKeys = Keys.Control | Keys.E; // boardEdit
                         shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
@@ -648,10 +646,10 @@ namespace MyShogi.View.Win2D
                         item_boardedit.DropDownItems.Add(item);
                     }
 
-                    {   // -- 手番の変更
+                    {   // -- Change of turn
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
-                        item.Text = "手番の変更(&T)"; // Turn change
+                        item.Text = "Change of turn (& T)"; // Turn change
                         item.Click += (sender, e) =>
                         {
                             var raw_pos = gameServer.Position.CreateRawPosition();
@@ -662,162 +660,162 @@ namespace MyShogi.View.Win2D
                         item_boardedit.DropDownItems.Add(item);
                     }
 
-                    {   // -- 平手の初期局面
+                    {   // -- The initial phase of Hirate
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
-                        item.Text = "平手の初期局面配置(&N)"; // No handicaped
+                        item.Text = "Hirate initial plaque placement (& N)"; // No handicaped
                         item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.NoHandicap.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
-                    {   // -- 駒落ちの局面
+                    {   // -- Phase of falling pieces
                         var item_handicap = new ToolStripMenuItem();
                         item_handicap.Enabled = inTheBoardEdit;
-                        item_handicap.Text = "駒落ち初期局面配置(&H)"; // Handicaped
+                        item_handicap.Text = "Initial phase placement of piece drop (& H)"; // Handicaped
                         item_boardedit.DropDownItems.Add(item_handicap);
 
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "香落ち(&1)";
+                            item.Text = "Incense drop (& 1)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "右香落ち(&2)";
+                            item.Text = "Right scent drop (& 2)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapRightKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "角落ち(&3)";
+                            item.Text = "Handicap (& 3)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapKaku.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "飛車落ち(&4)";
+                            item.Text = "Handicap (& 4)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapHisya.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "飛香落ち(&5)";
+                            item.Text = "Flying incense drop (& 5)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapHisyaKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "二枚落ち(&6)";
+                            item.Text = "Two pieces dropped (& 6)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap2.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "三枚落ち(&7)";
+                            item.Text = "Three pieces dropped (& 7)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "四枚落ち(&8)";
+                            item.Text = "Four pieces dropped (& 8)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap4.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "五枚落ち(&9)";
+                            item.Text = "Five pieces dropped (& 9)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "左五枚落ち(&A)";
+                            item.Text = "Left five drops (& A)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapLeft5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "六枚落ち(&B)";
+                            item.Text = "Six pieces dropped (& B)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap6.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "八枚落ち(&C)";
+                            item.Text = "Eight pieces dropped (& C)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap8.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "十枚落ち(&D)";
+                            item.Text = "Ten sheets dropped (& D)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
-                            item.Text = "歩三枚(&E)";
+                            item.Text = "Ayumu 3 sheets (& E)";
                             item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapPawn3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
 
                     }
 
-                    {   // -- 詰将棋用の配置(駒箱に)
+                    {   // -- Arrangement for Tsume Shogi (in the piece box)
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
-                        item.Text = "詰将棋用に配置(&M)"; // Mate
+                        item.Text = "Placed for Tsume Shogi (& M)"; // Mate
                         item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate1.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
-                    {   // -- 双玉詰将棋用の局面
+                    {   // -- Phase for Sotama Tsume Shogi
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
-                        item.Text = "双玉詰将棋用に配置(&D)"; // Dual king mate
+                        item.Text = "Placed for Sotama Tsume Shogi (& D)"; // Dual king mate
                         item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate2.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
                     {
-                        // - 双玉で玉以外すべて駒箱に
+                        // - With twin balls, everything except the ball is in the piece box
 
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
-                        item.Text = "双玉で玉以外すべて駒箱に配置(&U)"; // dUal king
+                        item.Text = "Place all but the balls in the piece box with twin balls (& U)"; // dUal king
                         item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate3.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
                 }
 
-                // -- 「棋譜編集」
+                // -- "Edit game record"
 
                 var kifu_edit = new ToolStripMenuItem();
-                kifu_edit.Text = "棋譜編集(&K)"; // Kifu edit
+                kifu_edit.Text = "Game record editing (& K)"; // Kifu edit
                 kifu_edit.Enabled = !inTheGame;
                 menu.Items.Add(kifu_edit);
 
-                // -- 「棋譜編集」配下のメニュー
+                // -- Menu under "Edit game record"
                 {
                     var item = new ToolStripMenuItem();
-                    item.Text = "本譜以外の分岐をクリアする(&C)"; // Clear
+                    item.Text = "Clear branches other than the main score (& C)"; // Clear
                     item.Click += (sender, e) =>
                     {
-                        if (TheApp.app.MessageShow("この操作により現在の棋譜上の本譜以外の分岐は削除されます。",
+                        if (TheApp.app.MessageShow("This operation deletes the branches on the current game record other than the main game record.",
                             MessageShowType.WarningOkCancel) == DialogResult.OK)
                         {
                             gameServer.ClearSubKifuTreeCommand();

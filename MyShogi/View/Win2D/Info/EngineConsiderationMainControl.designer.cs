@@ -137,7 +137,7 @@ namespace MyShogi.View.Win2D
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(179, 200);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "ミニ盤面";
+            this.tabPage1.Text = "Mini board";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // miniShogiBoard1
@@ -157,7 +157,7 @@ namespace MyShogi.View.Win2D
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Size = new System.Drawing.Size(179, 200);
             this.tabPage2.TabIndex = 0;
-            this.tabPage2.Text = "形勢グラフ";
+            this.tabPage2.Text = "Trend graph";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // evalGraphControl1

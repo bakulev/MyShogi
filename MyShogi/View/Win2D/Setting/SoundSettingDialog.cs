@@ -53,6 +53,5 @@ namespace MyShogi.View.Win2D.Setting
         }
 
         private ControlBinder binder = new ControlBinder();
-
     }
 }

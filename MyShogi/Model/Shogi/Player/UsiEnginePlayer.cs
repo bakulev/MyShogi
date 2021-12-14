@@ -6,16 +6,16 @@ using MyShogi.Model.Common.Process;
 namespace MyShogi.Model.Shogi.Player
 {
     /// <summary>
-    /// USIプロトコルでやりとりする思考エンジンを
-    /// Player派生クラスとして実装してある
+    /// A thinking engine that interacts with
+    /// the USI protocol is implemented as a Player-derived class.
     /// </summary>
     public class UsiEnginePlayer : Player
     {
-        // このあとStart()を呼び出すと開始する。
+        // Then call Start () to start.
         public UsiEnginePlayer()
         {
             Initializing = true;
-            Engine = new UsiEngine(); // 生成だけしておく。まだ開始はしていない。
+            Engine = new UsiEngine(); // Just generate it. It hasn't started yet.
         }
 
         public void Start(string exePath)
@@ -28,7 +28,7 @@ namespace MyShogi.Model.Shogi.Player
             };
 
             Engine.Connect(data);
-            // 接続できているものとする。
+            // It is assumed that the connection is established.
         }
 
         public PlayerTypeEnum PlayerType
@@ -37,7 +37,7 @@ namespace MyShogi.Model.Shogi.Player
         }
 
         /// <summary>
-        /// エンジンからUSIプロトコルによって渡されたエンジン名
+        /// The engine name passed by the engine by the USI protocol
         /// </summary>
         public string Name { get; set; }
 

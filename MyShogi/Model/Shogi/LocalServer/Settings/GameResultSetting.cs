@@ -7,24 +7,29 @@ using MyShogi.Model.Shogi.Kifu;
 namespace MyShogi.Model.Shogi.LocalServer
 {
     /// <summary>
-    /// 対局結果を保存するときの設定
+    /// Settings for saving game results
     ///
-    /// GameResultWindowSettingDialogとdata bindして使う。
+    /// Use with GameResultWindowSettingDialog and data bind.
     /// </summary>
     public class GameResultSetting : NotifyObject
     {
         public GameResultSetting()
         {
-            // デフォルトでは自動保存、有効。
+            // By default, it is automatically saved and enabled.
             AutomaticSaveKifu = true;
 
-            // デフォルトではKIF形式
+            // KIF format by default
             KifuFileType = KifuFileType.KIF;
 
-            // デフォルトでは "Documents/YaneuraOuKifu" を保存先に設定しておく。
-            KifuSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) , "YaneuraOuKifu");
+            // By default, "Documents / YaneuraOuKifu" is set as the save destination.
+            var appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var appDataFolderPath2 = "D"; appDataFolderPath2 += appDataFolderPath.Substring(1);
+            if (Directory.Exists(appDataFolderPath2))
+                appDataFolderPath = appDataFolderPath2;
+            KifuSaveFolder = Path.Combine(appDataFolderPath, "YaneuraOuKifu");
 
-            // デフォルトでは、サブフォルダを作成する。
+
+            // By default, it creates a subfolder.
             CreateSubfolderOnContinuousGame = true;
 
             try
@@ -35,7 +40,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 棋譜を自動保存する。
+        /// Automatically save the game record.
         /// </summary>
         public bool AutomaticSaveKifu
         {

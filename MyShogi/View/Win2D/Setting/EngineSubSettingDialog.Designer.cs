@@ -43,58 +43,58 @@
             this.groupBox1.Controls.Add(this.numericUpDown1);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(13, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(375, 86);
+            this.groupBox1.Size = new System.Drawing.Size(395, 90);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "エンジン接続時のタイムアウト時間";
+            this.groupBox1.Text = "Time-out time when connecting the engine";
             this.toolTip1.SetToolTip(this.groupBox1, "エンジン接続時のタイムアウト時間を設定します。タイムアウトになるときは値を増やしてください。");
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(254, 28);
+            this.numericUpDown1.Location = new System.Drawing.Point(267, 29);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(77, 19);
+            this.numericUpDown1.Size = new System.Drawing.Size(81, 20);
             this.numericUpDown1.TabIndex = 5;
             this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(337, 30);
+            this.label3.Location = new System.Drawing.Point(355, 32);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 12);
+            this.label3.Size = new System.Drawing.Size(55, 15);
             this.label3.TabIndex = 2;
-            this.label3.Text = "秒";
+            this.label3.Text = "Seconds";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 30);
+            this.label1.Location = new System.Drawing.Point(18, 32);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(154, 12);
+            this.label1.Size = new System.Drawing.Size(186, 15);
             this.label1.TabIndex = 2;
-            this.label1.Text = "\"usi\"に対する\"usiok\"応答まで";
+            this.label1.Text = "Until the \"usiok\" response to \"usi\"";
             this.toolTip1.SetToolTip(this.label1, "エンジン接続時にエンジン側がオプション一覧を返すまで。\r\n0を指定すると時間無制限。");
             // 
             // EngineSubSettingDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(101F, 101F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(399, 110);
+            this.ClientSize = new System.Drawing.Size(420, 116);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EngineSubSettingDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "エンジン補助設定";
+            this.Text = "Engine auxiliary settings";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

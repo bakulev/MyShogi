@@ -45,7 +45,7 @@
             this.gameScreenControl1.Location = new System.Drawing.Point(0, 0);
             this.gameScreenControl1.Name = "gameScreenControl1";
             this.gameScreenControl1.Setting = null;
-            this.gameScreenControl1.Size = new System.Drawing.Size(262, 201);
+            this.gameScreenControl1.Size = new System.Drawing.Size(276, 211);
             this.gameScreenControl1.TabIndex = 0;
             // 
             // toolStrip1
@@ -62,7 +62,7 @@
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
             this.toolStrip1.ShowItemToolTips = false;
-            this.toolStrip1.Size = new System.Drawing.Size(262, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(276, 26);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -72,7 +72,7 @@
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton1.Text = "◀";
             this.toolStripButton1.ToolTipText = "最初の局面に戻る";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
@@ -83,7 +83,7 @@
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton2.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton2.Text = "◁";
             this.toolStripButton2.ToolTipText = "一手戻る";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
@@ -94,7 +94,7 @@
             this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton3.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton3.Text = "▷";
             this.toolStripButton3.ToolTipText = "一手進む";
             this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
@@ -105,7 +105,7 @@
             this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton4.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton4.Text = "▶";
             this.toolStripButton4.ToolTipText = "最後の局面に進む";
             this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
@@ -116,21 +116,21 @@
             this.toolStripButton6.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton6.Image")));
             this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton6.Name = "toolStripButton6";
-            this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton6.Text = "転";
-            this.toolStripButton6.ToolTipText = "盤面を反転します。";
+            this.toolStripButton6.Size = new System.Drawing.Size(38, 23);
+            this.toolStripButton6.Text = "Turn";
+            this.toolStripButton6.ToolTipText = "Invert the board.";
             this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
             // 
             // MiniShogiBoard
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(101F, 101F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.gameScreenControl1);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MiniShogiBoard";
-            this.Size = new System.Drawing.Size(262, 201);
+            this.Size = new System.Drawing.Size(276, 211);
             this.Resize += new System.EventHandler(this.MiniShogiBoard_Resize);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();

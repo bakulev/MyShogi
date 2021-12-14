@@ -61,52 +61,52 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(374, 179);
+            this.groupBox1.Size = new System.Drawing.Size(393, 188);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "先手/下手";
+            this.groupBox1.Text = "First move / poor move";
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(7, 120);
+            this.textBox2.Location = new System.Drawing.Point(7, 126);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(360, 52);
+            this.textBox2.Size = new System.Drawing.Size(379, 55);
             this.textBox2.TabIndex = 9;
             this.textBox2.TabStop = false;
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(35, 96);
+            this.checkBox1.Location = new System.Drawing.Point(37, 101);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(232, 16);
+            this.checkBox1.Size = new System.Drawing.Size(295, 19);
             this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "コンピューターは、相手の手番でも思考する。";
+            this.checkBox1.Text = "The computer thinks even in the other party\'s turn.";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(15, 70);
+            this.button1.Location = new System.Drawing.Point(16, 74);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 24);
+            this.button1.Size = new System.Drawing.Size(102, 25);
             this.button1.TabIndex = 6;
-            this.button1.Text = "エンジン選択";
-            this.toolTip1.SetToolTip(this.button1, "対局する思考エンジンを選びます。");
+            this.button1.Text = "Engine selection";
+            this.toolTip1.SetToolTip(this.button1, "Select the thinking engine to play.");
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(283, 70);
+            this.button2.Location = new System.Drawing.Point(298, 74);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(84, 24);
+            this.button2.Size = new System.Drawing.Size(88, 25);
             this.button2.TabIndex = 4;
-            this.button2.Text = "詳細設定";
-            this.toolTip1.SetToolTip(this.button2, "思考エンジンの細かい設定を変更できます。");
+            this.button2.Text = "Advanced Setting";
+            this.toolTip1.SetToolTip(this.button2, "You can change the detailed settings of the thinking engine.");
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -114,50 +114,51 @@
             // 
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(283, 47);
+            this.comboBox1.Location = new System.Drawing.Point(298, 49);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(84, 20);
+            this.comboBox1.Size = new System.Drawing.Size(88, 21);
             this.comboBox1.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.comboBox1, "コンピューターの棋力を選べます。");
+            this.toolTip1.SetToolTip(this.comboBox1, "You can choose the strength of your computer.");
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(119, 45);
+            this.pictureBox1.Location = new System.Drawing.Point(125, 47);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(160, 50);
+            this.pictureBox1.Size = new System.Drawing.Size(168, 53);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(118, 23);
+            this.label1.Location = new System.Drawing.Point(124, 24);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.Size = new System.Drawing.Size(39, 15);
             this.label1.TabIndex = 2;
-            this.label1.Text = "名前";
+            this.label1.Text = "name";
             // 
             // textBox1
             // 
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Location = new System.Drawing.Point(164, 22);
+            this.textBox1.Location = new System.Drawing.Point(173, 23);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(203, 19);
+            this.textBox1.Size = new System.Drawing.Size(213, 20);
             this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "あなた";
-            this.toolTip1.SetToolTip(this.textBox1, "プレイヤーの名前を変更できます。この名前が表示され、棋譜にも残ります。");
+            this.textBox1.Text = "you";
+            this.toolTip1.SetToolTip(this.textBox1, "You can change the name of the player. This name will be displayed and will remai" +
+        "n in the game record.");
             // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(13, 47);
+            this.radioButton2.Location = new System.Drawing.Point(14, 49);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(85, 16);
+            this.radioButton2.Size = new System.Drawing.Size(77, 19);
             this.radioButton2.TabIndex = 1;
             this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "コンピューター";
-            this.toolTip1.SetToolTip(this.radioButton2, "こちらの手番のプレイヤーをコンピューターにしたい時にここを選びます。");
+            this.radioButton2.Text = "computer";
+            this.toolTip1.SetToolTip(this.radioButton2, "Select this when you want to make the player of this turn a computer.");
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
             // 
@@ -165,23 +166,23 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(13, 23);
+            this.radioButton1.Location = new System.Drawing.Point(14, 24);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(47, 16);
+            this.radioButton1.Size = new System.Drawing.Size(64, 19);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "人間";
-            this.toolTip1.SetToolTip(this.radioButton1, "こちらの手番のプレイヤーを人間にしたい場合にここを選びます。");
+            this.radioButton1.Text = "human";
+            this.toolTip1.SetToolTip(this.radioButton1, "Select this if you want to make the player on your turn human.");
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // PlayerSettingControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(101F, 101F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.groupBox1);
             this.Name = "PlayerSettingControl";
-            this.Size = new System.Drawing.Size(380, 183);
+            this.Size = new System.Drawing.Size(400, 193);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

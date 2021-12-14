@@ -399,24 +399,23 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 棋譜ファイルを書き出す
-        /// フォーマットは引数のkfで指定する。
+        /// The format for writing the game record file is specified by the argument kf.
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="kf"></param>
         public string ToString(KifuFileType kt)
         {
-            // -- イベントの一時抑制
+            // -- Temporary suppression of events
 
-            // KifuListの更新通知がいっぱい発生すると棋譜ウィンドウが乱れるため。
+            // This is because the game record window is disturbed when a lot of KifuList update notifications occur.
             var e1 = Tree.PropertyChangedEventEnable;
             Tree.PropertyChangedEventEnable = false;
 
-            // 棋譜ウィンドウを操作してはならないので棋譜ウィンドウとのsyncを停止させておく。
+            // Since you must not operate the game record window, stop syncing with the game record window.
             var e2 = Tree.EnableKifuList;
             Tree.EnableKifuList = false;
 
-            // 局面をrootに移動(あとで戻す)
+            // Move phase to root (return later)
             var moves = Tree.RewindToRoot();
 
             string result = string.Empty;
@@ -452,14 +451,15 @@ namespace MyShogi.Model.Shogi.Kifu
                     break;
 
                 case KifuFileType.SVG:
-                    // SVG形式は局面出力のみで棋譜には対応しないが、一応書いておく
+                    // The SVG format is only for phase output and does
+                    // not support game records, but I will write it for the time being
                     result = ToSvgPositionString();
                     break;
 
-                // ToDo : 他の形式もサポートする
+                    // ToDo : Supports other formats
             }
 
-            // 呼び出された時の局面に戻す
+            // Return to the phase when called
             Tree.RewindToRoot();
             Tree.FastForward(moves);
 

@@ -15,13 +15,13 @@ using MyShogi.Model.Shogi.Core;
 namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
-    /// USI engineとのやりとりを抽象化するクラス
+    /// A class that abstracts the interaction with the USI engine 
     /// 
-    /// 読み筋をNotifyObjectを使って通知した時、UIスレッドに渡されて描画される。
-	/// この時、次の局面に行っていないことを保証される。
-    /// なぜなら、BeginInvoke()で呼び出すとき、UIスレッドのメソッドが呼び出される順が入れ替わることはなく、
-    /// 最初に局面の初期化コマンド(EngineInfoのSetRootSfen)から、PV送信(EngineInfoのEngineConsiderationPvData)の
-    /// 送信順は保証されるため、異なる局面のPVを検討ウィンドウが表示してしまうということはない。
+    /// When the reader is notified using NotifyObject, it is passed to the UI thread and drawn.
+	/// At this time, it is guaranteed that the next phase has not been taken.
+    /// Because when calling with BeginInvoke (), the order in which the methods of the UI thread are called does not change,
+    /// First, from the phase initialization command (EngineInfo SetRootSfen), PV transmission (EngineInfo EngineConsiderationPvData)
+    /// Since the transmission order is guaranteed, the review window will not display PVs in different phases.
 
     /// </summary>
     public class UsiEngine : NotifyObject
@@ -37,31 +37,31 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// 思考エンジンに接続する。
+        /// Connect to the thinking engine.
         /// </summary>
         /// <param name="data"></param>
         public void Connect(ProcessNegotiatorData data)
         {
-            Disconnect(); // 前の接続があるなら切断する。
+            Disconnect(); // Disconnect if there is a previous connection.
 
-            Log.Write(LogInfoType.UsiServer, $"思考エンジンに接続 , ExeFilePath = {data.ExeFilePath}");
+            Log.Write(LogInfoType.UsiServer, $"Connect to the thinking engine , ExeFilePath = {data.ExeFilePath}");
 
             try
             {
                 negotiator = new ProcessNegotiator();
                 negotiator.Connect(data);
                 negotiator.CommandReceived += UsiCommandHandler;
-                // ProcessNegotiator.Read()を呼び出すまではハンドラの処理が行われないので、
-                // この形で書いても、最初のメッセージを取りこぼすことはない。
+                // Since the handler is not processed until ProcessNegotiator.Read () is called,
+                // Writing in this form will not miss the first message.
 
                 ChangeState(UsiEngineState.Connected);
             }
             catch (Exception ex)
             {
-                // 思考エンジンに接続できないとき、Win32Exceptionが飛んでくる
+                // Win32Exception flies when you can't connect to the thought engine
                 ChangeState(UsiEngineState.ConnectionFailed);
                 
-                Exception = new Exception("思考エンジンへの接続に失敗しました。\r\nファイル名 : " + data.ExeFilePath +
+                Exception = new Exception("Failed to connect to the thinking engine. \r\nfile name : " + data.ExeFilePath +
                     "\r\n" + ex.Pretty());
             }
         }
@@ -135,10 +135,11 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// エンジンに対してコマンドを送信する。(デバッグ用)
-        /// 普段は、このクラスが自動的にやりとりをするので外部からこのメソッドを呼び出すことはない。(はず)
+        /// Send a command to the engine. (For debugging) Normally,
+        /// this class interacts automatically,
+        /// so this method is not called from the outside. (Should)
         /// 
-        /// 基本的にノンブロッキングだと考えられる。
+        /// It is basically considered non-blocking.
         /// </summary>
         /// <param name="command"></param>
         public void SendCommand(string command)
@@ -152,7 +153,7 @@ namespace MyShogi.Model.Shogi.Usi
             }
             catch (Exception ex)
             {
-                Exception = new Exception("思考エンジンとの通信が切断されました。\r\n" + ex.Pretty());
+                Exception = new Exception("Communication with the thought engine has been lost.\r\n" + ex.Pretty());
             }
 
         }
@@ -311,37 +312,37 @@ namespace MyShogi.Model.Shogi.Usi
         private void ChangeState(UsiEngineState state)
         {
             var oldState = State;
-            State = state; // この瞬間にイベントが発生するので、これを先にやっておかないとSendSetOptionList()などで困る。
+            State = state; // Since the event occurs at this moment, if you do not do this first, you will be in trouble with SendSetOptionList () etc.
 
-            Log.Write(LogInfoType.UsiServer, $"ChangeState()で{oldState.ToString()}から{state.ToString()}に状態が変化した。");
+            Log.Write(LogInfoType.UsiServer, $"ChangeState() and {oldState.ToString()} from {state.ToString()} The state changed to.");
 
             switch (state)
             {
                 case UsiEngineState.Connected:
-                    // 接続されたので"usi"と送信
+                    // Since it was connected, send "usi"
                     SendCommand("usi");
                     State = UsiEngineState.WaitUsiOk;
 
-                    // これ、応答タイムアウトがある。15秒。
-                    // これを超えるなら定期的に改行などkeep alive的な何かをエンジン側から定期的に送信すべきである。
+                    // This has a response timeout. 15 seconds.
+                    // If it exceeds this, something like keep alive such as line breaks should be sent periodically from the engine side.
                     ResetTimeOutTime();
                     break;
 
                 case UsiEngineState.UsiOk:
-                    // このタイミングで状態が変更になったことを通知すべき
-                    // エンジン設定時には、この状態で待たせておけば良い。
+                    // When setting the engine to notify that the status has
+                    // changed at this timing, it is sufficient to wait in this status.
 
-                    // 対局時には、このあと "isready"を送信して readyokを待つ。
+                    // At the time of the game, after that, send "is ready" and wait for ready ok.
                     if (!EngineSetting)
                     {
-                        // このタイミングでoptionを先に送らないとEvalDirの変更などが間に合わない。
+                        // If you do not send the option first at this timing, you will not be able to change the EvalDir in time.
                         SendSetOptionList();
 
                         SendCommand("isready");
                         State = UsiEngineState.WaitReadyOk;
 
-                        // これもタイムアウトがある。30秒。
-                        // これを超えるなら定期的に改行などkeep alive的な何かをエンジン側から定期的に送信すべきである。
+                        // This also has a timeout. 30 seconds.
+                        // If it exceeds this, something like keep alive such as line breaks should be sent periodically from the engine side.
                         ResetTimeOutTime();
                     }
                     break;
@@ -361,29 +362,29 @@ namespace MyShogi.Model.Shogi.Usi
                     throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのisreadyコマンドに対する応答が遅すぎます。" +
                         "毎回タイムアウトになるなら、設定→エンジン補助設定でisreadyコマンドに対するタイムアウトまでの時間を増やしてください。");
 
-                // これ以外の変化に対する応答は必要ない。
+                    // No response to any other changes is required.
             }
         }
 
 
         /// <summary>
-        /// 思考エンジンの標準出力から送られてきたコマンドの解釈用
+        /// For interpreting commands sent from the standard output of the thinking engine
         /// </summary>
         /// <param name="command"></param>
         private void UsiCommandHandler(string command)
         {
             try
             {
-                // keep alive的な何かかも知れないので、思考エンジン側からメッセージが送られてきた以上、
-                // タイムアウト時間を延長してやる。
+                // It may be something like keep alive, so as long as the message is sent
+                // from the thinking engine side, I will extend the timeout time.
                 if (State == UsiEngineState.WaitUsiOk || State == UsiEngineState.WaitReadyOk)
                     ResetTimeOutTime();
 
-                // 空行なら解釈するまでもない。
+                // There is no need to interpret it if it is a blank line.
                 if (string.IsNullOrWhiteSpace(command))
                     return;
 
-                // 前後の空白は削除しておきます。
+                // Remove the blanks before and after.
                 var trimmedCommand = command.Trim();
                 //Log.Info("{0}> {1}", LogName, trimmedCommand);
 
@@ -415,7 +416,7 @@ namespace MyShogi.Model.Shogi.Usi
                         HandleInfo(scanner);
                         break;
 
-                    // u2bやBonadapterのためのスペシャルコマンド
+                    // Special commands for u2b and Bonadapter
                     case "B<":
                         break;
 
@@ -430,13 +431,13 @@ namespace MyShogi.Model.Shogi.Usi
 
             } catch (Exception ex)
             {
-                // 例外をログに出力しておく。
-                Log.Write(LogInfoType.UsiParseError, $"例外が発生しました。: {ex.Message}");
+                // Output the exception to the log.
+                Log.Write(LogInfoType.UsiParseError, $"Exception occured: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// usiok コマンドを処理します。
+        /// Handles the usiok command.
         /// </summary>
         private void HandleUsiOk()
         {
@@ -530,7 +531,7 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// id name などのコマンドを処理します。
+        /// Handles commands such as id name.
         /// </summary>
         private void HandleId(Scanner scanner)
         {
@@ -540,7 +541,7 @@ namespace MyShogi.Model.Shogi.Usi
                     OriginalName = scanner.LastText;
                     break;
                 case "author":
-                case "auther": // typoも受け入れる
+                case "auther": // Also accept typo
                     Author = scanner.LastText;
                     break;
                 default:
@@ -550,20 +551,20 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// option コマンドを処理します。
+        /// Handles the option command.
         /// </summary>
         private void HandleOption(Scanner scanner)
         {
             var option = UsiOption.Parse(scanner.Text);
 
-            // "usi"は一度しか送っていないので同じ名前のoptionが二度送られてくることは想定しなくて良いはずなのだが、
-            // 一応きちんと処理しておく。
+            // Since "usi" is sent only once, it should not be expected that
+            // the option with the same name will be sent twice, but I will handle it properly. 
             AddOption(option);
         }
 
         /// <summary>
-        /// OptionListにoptionを追加する。
-        /// nameが重複していれば追加せずに置き換える。
+        /// Add option to OptionList.
+        /// If the name is duplicated, replace it without adding it.
         /// </summary>
         /// <param name="option"></param>
         private void AddOption(UsiOption option)
@@ -579,7 +580,7 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// bestmove コマンドを処理します。
+        /// Handles the bestmove command.
         /// </summary>
         private void HandleBestMove(Scanner scanner)
         {
@@ -588,7 +589,7 @@ namespace MyShogi.Model.Shogi.Usi
                 Move move = Move.NONE , ponder = Move.NONE;
                 var moveSfen = scanner.ParseText();
 
-                // まず、特殊な指し手を調べます。
+                // First, look for a special move.
                 switch (moveSfen)
                 {
                     case "resign":
@@ -599,44 +600,44 @@ namespace MyShogi.Model.Shogi.Usi
                         break;
                 }
 
-                // 上記に該当しなかった。
+                // The above did not apply.
                 if (move == Move.NONE)
                 {
                     move = Core.Util.FromUsiMove(moveSfen);
                     if (move == Move.NONE)
                     {
-                        // 解釈できない文字列
+                        // Uninterpretable string
                         throw new UsiException(
-                            moveSfen + ": SFEN形式の指し手が正しくありません。");
+                            moveSfen + ": The SFEN format move is incorrect.");
                     }
                 }
 
-                // 後続があって、"ponder"と書いてある。
+                // There is a trailer and it says "ponder".
                 if (!scanner.IsEof)
                 {
                     if (scanner.ParseText() != "ponder")
                     {
-                        // "ponder"以外はこれないはずなのに…。
+                        // There shouldn't be anything other than "ponder" ...
                         throw new UsiException(
                             "invalid command: " + scanner.Text);
                     }
 
-                    // ponderの指し手は'(null)'などが指定されることもあるので、
-                    // 指せなくてもエラーにはしません。
+                    // Since'(null)' etc. may be specified for the move of ponder,
+                    // it does not cause an error even if it cannot be pointed.
                     var ponderSfen = scanner.ParseText();
                     ponder = Core.Util.FromUsiMove(ponderSfen);
                 }
 
-                // 確定したので格納しておく。
-                // 消費時間、サーバー計測で格納しておいて、それを用いて時間の計算をすべきような気もする。
-                // (いまは、このbestmoveを取り出した時までの時間になっている)
+                // Since it was confirmed, store it.
+                // I feel like I should store the consumption time and server measurement and use it to calculate the time.
+                // (Now it's time to take out this best move)
                 if (ThinkingBridge.BestMoveReceived(move,ponder))
                     ThinkReport = UsiEngineReportMessageType.UsiThinkEnd;
             }
             catch (UsiException ex)
             {
-                // 例外を出力しておく。
-                Log.Write(LogInfoType.UsiParseError, $"例外が発生しました。: {ex.Message}");
+                // Output an exception.
+                Log.Write(LogInfoType.UsiParseError, $"Exception occured: {ex.Message}");
             }
         }
 
