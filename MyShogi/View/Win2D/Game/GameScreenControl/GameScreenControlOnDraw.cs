@@ -134,7 +134,7 @@ namespace MyShogi.View.Win2D
                     pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + 10,
                     pickedfrom_sprite.rect.Width - 20, pickedfrom_sprite.rect.Height / 5);
                 var moves2_rect = new Rectangle(
-                    pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + pickedfrom_sprite.rect.Height - 10,
+                    pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + 10,
                     pickedfrom_sprite.rect.Width - 20, pickedfrom_sprite.rect.Height / 5);
                 var moves1_sprite = new Sprite(moves_image, moves1_rect);
                 var moves2_sprite = new Sprite(moves_image, moves2_rect);
@@ -143,12 +143,11 @@ namespace MyShogi.View.Win2D
                 {
                     var pc = pos.PieceOn(sq);
                     var dest = PieceLocation((SquareHand)sq, reverse);
-                    dest.X += 30; dest.Y += 30;
                     // Is it a candidate box for the destination?
                     if (moves1_bb.IsSet(sq))
-                        DrawSprite(dest, moves1_sprite);
+                        DrawSprite(new Point(dest.X + 10, dest.Y + pickedfrom_sprite.rect.Height - moves1_sprite.rect.Height - 10), moves1_sprite);
                     if (moves2_bb.IsSet(sq))
-                        DrawSprite(dest, moves2_sprite);
+                        DrawSprite(new Point(dest.X + 10, dest.Y + 10), moves2_sprite);
                 }
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
