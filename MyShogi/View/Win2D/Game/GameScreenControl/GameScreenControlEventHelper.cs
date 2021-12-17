@@ -526,9 +526,9 @@ namespace MyShogi.View.Win2D
         private Move[] moves_buf { get; } = new Move[(int)ShogiCore.Move.MAX_MOVES];
 
         /// <summary>
-        /// sqの駒を掴む
-        /// sqの駒が自駒であることは確定している。
-        /// 行き先の候補の升情報を更新する。
+        /// Grab the sq piece
+        /// It is confirmed that the piece of sq is its own piece.
+        /// Update the destination candidate box information.
         /// </summary>
         /// <param name="sq"></param>
         public void pick_up(SquareHand sq)
@@ -538,22 +538,23 @@ namespace MyShogi.View.Win2D
 
             var pos = gameServer.Position;
 
-            // この駒をユーザーが掴んで動かそうとしていることを示す
+            // Indicates that the user is trying to grab and move this piece
             viewState.picked_from = sq;
             viewState.picked_to = SquareHand.NB;
             viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
-            // デバッグ用に出力する。
+            // Output for debugging.
             //Console.WriteLine("pick up : " + sq.Pretty() );
 
-            // 簡単に利きを表示する。
-            // ここで連続王手による千日手などを除外すると
-            // 「ユーザーが駒が動かせない、バグだ」をみたいなことを言い出しかねない。
-            // 移動後に連続王手の千日手を回避していないという警告を出すようにしなくてはならない。
+            // Show your hand easily.
+            // If you exclude Sennichite by consecutive checkers here,
+            // you may say something like "The user can't move the piece, it's a bug".
+            // You must be warned that you haven't avoided
+            // the consecutive checker Sennichite after the move.
 
-            // 合法手を生成して、そこに含まれるものだけにする。
-            // この生成、局面が変わったときに1回でいいような気はするが..
-            // 何回もクリックしまくらないはずなのでまあいいや。
+            // Generate legal moves and only include them.
+            // I feel that this generation, when the situation changes, it is enough to do it once ..
+            // You shouldn't click it many times, so no.
 
             int n = MoveGen.LegalAll(pos, moves_buf, 0);
 
@@ -561,34 +562,38 @@ namespace MyShogi.View.Win2D
             var pt = pos.PieceOn(sq).PieceType();
             Bitboard bb = Bitboard.ZeroBB();
 
-            // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を
-            // Bitboardに反映させていく。
+            // The move destination square that matches
+            // the move source square for all the generated legal moves
+            // is reflected in the Bitboard.
             for (int i = 0; i < n; ++i)
             {
                 var m = moves_buf[i];
                 if (is_drop)
                 {
-                    // 駒の打てる先。これは合法手でなければならない。
-                    // 二歩とか打ち歩詰めなどがあるので合法手のみにしておく。
-                    // (打ち歩詰めなので打てませんの警告ダイアログ、用意してないので…)
+                    // The destination where the piece can be hit. This must be a legal move.
+                    // There are two steps and drop pawns, so keep only legal hands.
+                    // (Because I haven't prepared a warning
+                    // dialog that I can't hit because I'm struggling ...)
 
-                    // 合法手には自分の手番の駒しか含まれないのでこれでうまくいくはず
+                    // Legal moves only include pieces of your turn, so this should work
                     if (m.IsDrop() && m.DroppedPiece() == pt)
                         bb |= m.To();
                 }
                 else
                 {
-                    // 駒の移動できる先
+                    // Where the piece can move
                     if (!m.IsDrop() && m.From() == (Square)sq)
                         bb |= m.To();
                 }
             }
 
-            // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を、移動できる升の候補として表示する。
+            // The move destination square that matches the move source square for
+            // all the generated legal moves is displayed as a candidate for the moveable square.
             viewState.picked_piece_legalmovesto = bb;
             viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
-            // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
+            // Since the screen state changes as this value changes,
+            // OnDraw () must be called next time.
             Dirty = true;
 
         }
@@ -677,7 +682,7 @@ namespace MyShogi.View.Win2D
                 // この状態を初期状態にするのは少しおかしいが、どうせこのあとマウスを動かすであろうからいいや。
                 state.promote_dialog_selection = PromoteDialogSelectionEnum.NO_SELECT;
 
-                // toの升以外は暗くする。
+                // Darken except for the to box.
                 state.picked_piece_legalmovesto = new Bitboard((Square)to);
 
                 Dirty = true;
@@ -967,9 +972,9 @@ namespace MyShogi.View.Win2D
                 {
                     case GameScreenControlViewStateEnum.Normal:
                         {
-                            // 掴んだのが自分の駒であるか
+                            // Is it your piece that you grabbed?
                             if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove && !sq.IsPieceBoxPiece())
-                                pick_up(sq); // sqの駒を掴んで行き先の候補の升情報を更新する
+                                pick_up(sq); // Grab the sq piece and update the destination candidate box information
 
                             break;
                         }

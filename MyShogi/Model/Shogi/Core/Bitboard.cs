@@ -51,7 +51,7 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// sqの升が1のBitboardとして初期化する。
+        /// Initialize as a Bitboard with a sq box of 1.
         /// </summary>
         /// <param name="sq"></param>
         public Bitboard(Square sq)
@@ -220,7 +220,7 @@ namespace MyShogi.Model.Shogi.Core
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// sqの升のbitが立っているかを判定する。
+        /// Judge whether the bit of the box of sq is set.
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
@@ -1046,8 +1046,7 @@ namespace MyShogi.Model.Shogi.Core
         private static Bitboard[] RANK_BB;
 
         /// <summary>
-        /// Bitboard(Square)で用いるテーブル
-        /// 配列のサイズはSquare.NB_PLUS1
+        /// The size of the table array used in Bitboard (Square) is Square.NB_PLUS1
         /// </summary>
         private static Bitboard[] SQUARE_BB;
 

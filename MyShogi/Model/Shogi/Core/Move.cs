@@ -267,9 +267,9 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 指し手の移動元の升を返す。
+        /// Returns the box from which the move was moved.
         ///
-        /// 指し手がIsOk()でなければSquare.NBが返る。
+        /// If the move is not IsOk (), Square.NB is returned.
         /// </summary>
         public static Square From(this Move m)
         {
@@ -283,9 +283,9 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 指し手の移動先の升を返す。
+        /// Returns the square to which the move is moved.
         /// 
-        /// 指し手がIsOk()でなければSquare.NBが返る。
+        /// If the move is not IsOk (), Square.NB is returned.
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>

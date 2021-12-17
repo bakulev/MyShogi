@@ -8,9 +8,9 @@ namespace MyShogi.Model.Shogi.Core
     public static class MoveGen
     {
         /// <summary>
-        /// 合法な指し手を生成する。
-        /// moves[startIndex]から使っていく。返し値をendIndexとして、
-        /// moves[startIndex]...moves[endIndex-1]まで使うものとする。
+        /// Generate a legitimate move.
+        /// Use from moves [startIndex]. It is assumed that the return value
+        /// is set as endIndex and moves [startIndex] ... moves [endIndex-1] are used.
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="moves"></param>

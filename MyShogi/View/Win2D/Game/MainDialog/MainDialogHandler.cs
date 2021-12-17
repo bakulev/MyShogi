@@ -378,13 +378,13 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 「投」ボタン。投了の処理。
+        /// "Throw" button. Processing of termination.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripButton1_Click(object sender, System.EventArgs e)
         {
-            // 受理されるかどうかは知らん
+            // I don't know if it will be accepted
             gameScreenControl1.DoMoveCommand(SCore.Move.RESIGN);
         }
 
@@ -513,22 +513,22 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// Drag & Dropのためのハンドラ
+        /// Handler for Drag & Drop
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void MainDialog_DragEnter(object sender, DragEventArgs e)
         {
-            // 対局中は受け付けない。
+            // Not accepted during the game.
             if (gameScreenControl1.gameServer.GameMode != GameModeEnum.ConsiderationWithoutEngine)
                 return;
 
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                // ドラッグ中のファイルやディレクトリの取得
+                // Get the file or directory you are dragging
                 var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                // ファイル以外であればイベント・ハンドラを抜ける
+                // Exit the event handler if it is not a file
                 foreach (string d in drags)
                     if (!System.IO.File.Exists(d))
                         return;

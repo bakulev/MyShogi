@@ -109,7 +109,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 手番
         /// </summary>
-        public Color sideToMove { get; private set; } = Color.BLACK;
+        public Color sideToMove { get; set; } = Color.BLACK;
 
         /// <summary>
         /// 玉の位置

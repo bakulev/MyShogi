@@ -69,18 +69,18 @@ namespace MyShogi.Model.Resource.Images
 
             return sprite;
         }
-        
+
 
         /// <summary>
-        /// 着手の移動先、移動元などのエフェクト画像の取得。
-        /// ImageManager.PieceMoveImgに格納されている画像。
-        /// pc = 左から何番目の画像か。
+        /// Acquisition of effect images such as the destination and source of the move.
+        /// Images stored in ImageManager.PieceMoveImg.
+        /// pc = What image is it from the left?
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
         public static Sprite PieceMove(PieceMoveEffect pe , Piece pc = Shogi.Core.Piece.NO_PIECE)
         {
-            // 効果を「オフ」にしているならnull spriteを返してやる。
+            // If the effect is "off", it will return a null sprite.
             var config = TheApp.app.Config;
             switch(pe)
             {

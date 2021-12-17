@@ -57,11 +57,13 @@ namespace MyShogi.View.Win2D
         public Graphics graphics;
 
         /// <summary>
-        /// スプライトを描画するコード
-        /// 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
-        /// pの地点に等倍でSpriteを描画する。(描画するときにaffine変換を行うものとする)
-        /// ratioは表示倍率。デフォルトでは1.0
-        /// ratioがマイナスなら、180度回転させての描画
+        /// Code for drawing sprites All the following drawings
+        /// are abstracted to sprite drawing for portability.
+        /// Draw Sprite at the same magnification at point p.
+        /// (Affine transformation shall be performed when drawing)
+        /// ratio is the display magnification.
+        /// By default, if 1.0 ratio is negative,
+        /// it will be rotated 180 degrees for drawing.
         /// </summary>
         /// <param name="g"></param>
         /// <param name="img"></param>

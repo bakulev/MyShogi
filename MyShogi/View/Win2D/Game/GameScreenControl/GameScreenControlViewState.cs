@@ -67,8 +67,9 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 掴んでいる駒が行ける升の候補
-        /// PromoteDialogのときは、picked_toのみ1になっている。
+        /// In the case of PromoteDialog,
+        /// which is a candidate for a box where
+        /// the piece you are holding can go, only picked_to is 1.
         /// </summary>
         public Bitboard picked_piece_legalmovesto;
 

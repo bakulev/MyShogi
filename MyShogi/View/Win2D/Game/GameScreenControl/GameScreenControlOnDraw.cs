@@ -52,106 +52,165 @@ namespace MyShogi.View.Win2D
             // このメソッドが呼び出されている最中にこの値が変化しうるので、このメソッド内では、ここで取得したものを一貫して使う必要がある。
             var reverse = gameServer.BoardReverse;
 
-            // -- 盤面の描画
+            // -- Drawing on the board
             {
-                // 盤面編集中　→　駒箱を描画する必要がある。
+                // Editing the board → It is necessary to draw the piece box.
                 var inTheBoardEdit = gameServer.InTheBoardEdit;
 
-                // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
+                // If the coordinate system is specified as straight,
+                // it will be affine-transformed and drawn appropriately.
                 DrawSprite(new Point(0, 0), SPRITE.Board(PieceTableVersion, inTheBoardEdit));
             }
 
-            // -- 駒の描画
+            // -- Drawing of pieces
             {
-                // -- 駒を持ち上げた時の描画
+                // -- Drawing when the piece is lifted
 
                 var DrawPickedSprite = (Action<Sprite,Point>)((sprite,dest) =>
                 {
-                    // 移動元の升に適用されるエフェクトを描画する。
+                    // Draw the effect applied to the source box.
                     DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
 
                     switch (config.PickedMoveDisplayStyle)
                     {
                         case 0:
-                            // 少し持ち上げた感じで描画する。
+                            // Draw with a slight lift.
                             picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
                             break;
 
                         case 1:
-                            // マウスカーソルに追随させるモードであるから、マウスカーソルの位置に..
+                            // Since it is a mode to follow the mouse cursor,
+                            // it is at the position of the mouse cursor ..
                             picked_sprite = new SpriteEx(sprite, MouseClientLocation
                                 + new Size(-piece_img_size.Width / 2, -piece_img_size.Height / 2));
                             break;
                     }
                 });
 
-                // -- 盤上の駒
+                // -- Pieces on the board
 
-                // 最終手(初期盤面などでは存在せず、lastMove == Move.NONEであることに注意)
+                // Last move (Note that it does not exist on the initial board,
+                // etc., lastMove == Move.NONE)
                 var lastMove = pos.State().lastMove;
-                // 最終手の移動元の升
+                // The box from which the last move was made
                 var lastMoveFrom = (lastMove != ShogiCore.Move.NONE && !lastMove.IsDrop()) ? lastMove.From() : Square.NB;
-                // 最終手の移動先の升
+                // The destination box of the last move
                 var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
+
+                // Generate legal moves and only include them.
+                // I feel that this generation, when the situation changes, it is enough to do it once ..
+                // You shouldn't click it many times, so no.
+                Bitboard moves1_bb = Bitboard.ZeroBB();
+                Bitboard moves2_bb = Bitboard.ZeroBB();
+                Move[] pissible_moves1 = new Move[(int)ShogiCore.Move.MAX_MOVES];
+                Move[] pissible_moves2 = new Move[(int)ShogiCore.Move.MAX_MOVES];
+                var possible_pos = pos.Clone();
+                int n1 = MoveGen.LegalAll(possible_pos, pissible_moves1, 0);
+                if (pos.sideToMove == SColor.BLACK)
+                    possible_pos.sideToMove = SColor.WHITE;
+                else if (pos.sideToMove == SColor.WHITE)
+                    possible_pos.sideToMove = SColor.BLACK;
+                int n2 = MoveGen.LegalAll(possible_pos, pissible_moves2, 0);
+                // The move destination square that matches
+                // the move source square for all the generated legal moves
+                // is reflected in the Bitboard.
+                for (int i = 0; i < n1; ++i)
+                {
+                    var m = pissible_moves1[i];
+                    // Where the piece can move
+                    if (!m.IsDrop())
+                        moves1_bb |= m.To();
+                }
+                for (int i = 0; i < n2; ++i)
+                {
+                    var m = pissible_moves2[i];
+                    // Where the piece can move
+                    if (!m.IsDrop())
+                        moves2_bb |= m.To();
+                }
+                var pickedfrom_sprite = SPRITE.PieceMove(PieceMoveEffect.PickedFrom);
+                var moves_image = pickedfrom_sprite.image;
+                var moves1_rect = new Rectangle(
+                    pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + 10,
+                    pickedfrom_sprite.rect.Width - 20, pickedfrom_sprite.rect.Height / 5);
+                var moves2_rect = new Rectangle(
+                    pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + pickedfrom_sprite.rect.Height - 10,
+                    pickedfrom_sprite.rect.Width - 20, pickedfrom_sprite.rect.Height / 5);
+                var moves1_sprite = new Sprite(moves_image, moves1_rect);
+                var moves2_sprite = new Sprite(moves_image, moves2_rect);
+                int k = 0;
+                for (Square sq = Square.ZERO; k++ < 300 && sq < Square.NB; ++sq)
+                {
+                    var pc = pos.PieceOn(sq);
+                    var dest = PieceLocation((SquareHand)sq, reverse);
+                    dest.X += 30; dest.Y += 30;
+                    // Is it a candidate box for the destination?
+                    if (moves1_bb.IsSet(sq))
+                        DrawSprite(dest, moves1_sprite);
+                    if (moves2_bb.IsSet(sq))
+                        DrawSprite(dest, moves2_sprite);
+                }
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-                    var dest = PieceLocation((SquareHand)sq , reverse);
+                    var dest = PieceLocation((SquareHand)sq, reverse);
 
-                    // ダイアログが出ている時や、駒を掴んでいるときは最終手のエフェクトがあると紛らわしいので消す。
+                    // When the dialog is displayed or when you are holding a piece,
+                    // it is confusing that there is an effect of the final hand, so turn it off.
                     if (state.state == GameScreenControlViewStateEnum.Normal)
                     {
-                        // これが最終手の移動元の升であるなら、エフェクトを描画する。
+                        // If this is the final move source box, draw the effect.
                         if (sq == lastMoveFrom)
                         {
                             var piece_to = pos.PieceOn(lastMoveTo);
                             DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.From, piece_to));
                         }
 
-                        // これが最終手の移動先の升であるなら、エフェクトを描画する。
+                        // If this is the destination box for the final move, draw the effect.
                         if (sq == lastMoveTo)
                             DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
                     }
 
-                    // 盤面反転モードなら、駒を先後入れ替えて描画する。
+                    // In the board inversion mode, the pieces are swapped first and second to draw.
                     var sprite = SPRITE.Piece(reverse ? pc.Inverse() : pc);
 
-                    // いま持ち上げている駒であるなら、少し持ち上げている感じで描画する
+                    // If it is the piece you are lifting now,
+                    // draw it as if you were lifting it a little.
                     if (picked_from != SquareHand.NB)
                     {
-                        // ただし、一番手前に描画したいので、この駒は一番最後に描画する。
-                        // (なので今回の描画はskipする)
+                        // However, I want to draw it in the foreground, so I draw this piece last.
+                        // (So skip this drawing)
                         if (sq == (Square)picked_from)
                         {
                             DrawPickedSprite(sprite, dest);
-                            continue; // 持ち上げているので通常の駒の描画をskipする。
+                            continue; // Since it is lifted, skip the normal piece drawing.
                         }
                         else
                         {
-                            // 駒を持ち上げてはいる時の移動先の候補の升のエフェクト
+                            // The effect of the candidate box to move to when lifting the piece
 
-                            // 移動先の候補の升か？
+                            // Is it a candidate box for the destination?
                             var movable = viewState.picked_piece_legalmovesto.IsSet(sq);
 
                             if (movable && config.PickedMoveToColorType >= 4)
-                            // 移動先の候補の升を明るく
+                            // Brighten the box of the candidate to move to
                             {
                                 var picked_pc = pos.PieceOn(picked_from);
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo, picked_pc));
                             }
                             else if (!movable && config.PickedMoveToColorType < 4)
-                                // 移動先の候補以外の升を暗く
+                                // Darken the boxes other than the candidates for the destination
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo));
 
                         }
                     }
 
-                    // 駒の通常の描画
+                    // Normal drawing of pieces
                     DrawSprite(dest, sprite);
                 }
 
-                // -- 手駒の描画
+                // -- Drawing of hand pieces
 
                 foreach (var c in All.Colors())
                 {

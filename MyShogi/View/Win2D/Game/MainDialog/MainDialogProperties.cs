@@ -4,82 +4,82 @@ using MyShogi.Model.Shogi.LocalServer;
 namespace MyShogi.View.Win2D
 {
     /// <summary>
-    /// 対局盤面などがあるメインウィンドゥ
+    /// Main window with game board etc.
     ///
-    /// propertyだけここに集めてある。
+    /// Only property is collected here.
     /// </summary>
     public partial class MainDialog : Form
     {
 
         /// <summary>
-        /// activeなGameScreenControlに関連付けられてるLocalGameServerのインスタンスを返す。
-        /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
+        /// Returns an instance of LocalGameServer associated with an active GameScreenControl.
+        /// Currently, GameScreenControl only creates one instance, so it is active.
         /// </summary>
         public LocalGameServer gameServer { get { return gameScreenControl1.gameServer; } }
 
         // -- DockWindow
 
-        // 棋譜Control
+        // Game record Control
 
         /// <summary>
-        /// activeなGameScreenControlに関連付けられているKifuControlのインスタンスを返す。
-        /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
+        /// Returns an instance of KifuControl associated with an active GameScreenControl.
+        /// Currently, GameScreenControl only creates one instance, so it is active.
         /// </summary>
         public KifuControl kifuControl { get { return gameScreenControl1.kifuControl; } }
 
         /// <summary>
-        /// 棋譜ウインドウをフローティングモードで使っているとき用。
+        /// For when using the game record window in floating mode.
         /// </summary>
         public DockWindow kifuDockWindow { get; set; }
 
 
-        // 検討Control
+        // Consider Control
 
         /// <summary>
-        /// これが検討ウインドウ本体。
-        /// この生成はMainDialogが行う。
+        /// This is the main body of the examination window.
+        /// This generation is done by MainDialog.
         /// 
-        /// これを↓のに埋めて使う。
+        /// Fill this in ↓ and use it.
         /// </summary>
         public EngineConsiderationMainControl engineConsiderationMainControl;
 
         /// <summary>
-        /// 検討ウインドウを埋めて使うための入れ物。
-        /// エンジンの思考出力用。
+        /// A container for filling and using the review window.
+        /// For engine thinking output.
         /// </summary>
         public DockWindow engineConsiderationDockWindow;
 
 
-        // ミニ盤面
+        // Mini board
 
         /// <summary>
-        /// 検討ウインドウに埋まっているミニ盤面のControl。
-        /// 検討ウインドウから外して、Dockして使うときもこのinstanceは有効。
+        /// Control of the mini board surface buried in the examination window.
+        /// This instance is also effective when you remove it from the examination window and use it as a Dock. 
         /// </summary>
         public MiniShogiBoard miniShogiBoard { get { return engineConsiderationMainControl.MiniShogiBoard; } }
 
         /// <summary>
-        /// ミニ盤面を埋めて使うための入れ物。
+        /// A container for filling and using the mini board.
         /// </summary>
         public DockWindow miniShogiBoardDockWindow;
 
 
-        // 形勢グラフ
+        // Trend graph
 
         /// <summary>
-        /// 検討ウインドウに埋まっている形勢グラフのControl。
-        /// 検討ウインドウから外して、Dockして使うときもこのinstanceは有効。
+        /// Control of the stance graph buried in the review window.
+        /// This instance is also effective when you remove it from the examination window and use it as a Dock.
         /// </summary>
         public EvalGraphControl evalGraphControl { get { return engineConsiderationMainControl.EvalGraphControl; } }
         /// <summary>
-        /// 形勢グラフを埋めて使うための入れ物。
+        /// A container for filling and using the situation graph.
         /// </summary>
         public Info.EvalGraphDialog evalGraphDialog;
 
-        // -- 単独ウインドウ
+        // --Single window
 
         /// <summary>
-        /// デバッグウィンドウ
+        /// Debug window
         /// </summary>
         public Form debugDialog;
     }
