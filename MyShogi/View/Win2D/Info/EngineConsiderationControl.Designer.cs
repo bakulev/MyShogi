@@ -3,14 +3,14 @@
     partial class EngineConsiderationControl
     {
         /// <summary> 
-        /// 必要なデザイナー変数です。
+        /// Required designer variables.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary> 
-        /// 使用中のリソースをすべてクリーンアップします。
+        /// Clean up all resources in use.
         /// </summary>
-        /// <param name="disposing">マネージ リソースを破棄する場合は true を指定し、その他の場合は false を指定します。</param>
+        /// <param name="disposing">Specify true if you want to destroy the managed resource, false otherwise.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -23,8 +23,8 @@
         #region コンポーネント デザイナーで生成されたコード
 
         /// <summary> 
-        /// デザイナー サポートに必要なメソッドです。このメソッドの内容を 
-        /// コード エディターで変更しないでください。
+        /// This method is required for designer support. The contents of this method
+        /// Do not change it in the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -112,21 +112,21 @@
             this.comboBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "候補手１手",
-            "候補手２手",
-            "候補手３手",
-            "候補手４手",
-            "候補手５手",
-            "候補手６手",
-            "候補手７手",
-            "候補手８手",
-            "候補手９手",
-            "候補手10手",
-            "候補手11手",
-            "候補手12手",
-            "候補手13手",
-            "候補手14手",
-            "候補手15手"});
+            "Candidate move 1 move",
+            "2 candidate moves",
+            "3 candidate moves",
+            "4 candidate moves",
+            "5 candidate moves",
+            "6 candidate moves",
+            "7 candidate moves",
+            "8 candidate moves",
+            "9 candidate moves",
+            "10 candidate moves",
+            "11 candidate moves",
+            "12 candidate moves",
+            "13 candidate moves",
+            "14 candidate moves",
+            "15 candidate moves"});
             this.comboBox1.Location = new System.Drawing.Point(2, 27);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox1.Name = "comboBox1";
@@ -164,28 +164,28 @@
             // 
             this.SendToMainKifu.Name = "SendToMainKifu";
             this.SendToMainKifu.Size = new System.Drawing.Size(426, 22);
-            this.SendToMainKifu.Text = "メイン棋譜にこの読み筋を分岐棋譜として送る(&S)";
+            this.SendToMainKifu.Text = "Send this reading line to the main game record as a branch game record (& S)";
             this.SendToMainKifu.Click += new System.EventHandler(this.SendToMainKifu_Click);
             // 
             // ReplaceMainKifu
             // 
             this.ReplaceMainKifu.Name = "ReplaceMainKifu";
             this.ReplaceMainKifu.Size = new System.Drawing.Size(426, 22);
-            this.ReplaceMainKifu.Text = "メイン棋譜をこの読み筋で置き換える(&R)";
+            this.ReplaceMainKifu.Text = "Replace the main game record with this reading line (& R)";
             this.ReplaceMainKifu.Click += new System.EventHandler(this.ReplaceMainKifu_Click);
             // 
             // PastePvToClipboard
             // 
             this.PastePvToClipboard.Name = "PastePvToClipboard";
             this.PastePvToClipboard.Size = new System.Drawing.Size(426, 22);
-            this.PastePvToClipboard.Text = "読み筋を表示のままの文字列でクリップボードに貼り付ける(&P)";
+            this.PastePvToClipboard.Text = "Paste the reading line to the clipboard with the displayed character string (& P)";
             this.PastePvToClipboard.Click += new System.EventHandler(this.PastePvToClipboard_Click);
             // 
             // PasteKifToClipboard
             // 
             this.PasteKifToClipboard.Name = "PasteKifToClipboard";
             this.PasteKifToClipboard.Size = new System.Drawing.Size(426, 22);
-            this.PasteKifToClipboard.Text = "読み筋をKIF形式でクリップボードに貼り付ける(&K)";
+            this.PasteKifToClipboard.Text = "Paste the reading line into the clipboard in KIF format (& K)";
             this.PasteKifToClipboard.Click += new System.EventHandler(this.PasteKifToClipboard_Click);
             // 
             // listView1

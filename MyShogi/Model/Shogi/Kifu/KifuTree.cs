@@ -1358,9 +1358,12 @@ namespace MyShogi.Model.Shogi.Kifu
                         case 3:
                             LastKifuString = KifFormatter.Ki2C.format(position, m);
                             break;
-
+                        case 4:
+                            LastKifuString = "fiff";
+                            break;
                         default:
-                            Debug.Assert(false);break;
+                            Debug.Assert(false);
+                            break;
                     }
                 }
 

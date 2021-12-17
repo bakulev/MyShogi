@@ -5,15 +5,15 @@ using MyShogi.Model.Shogi.Core;
 namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
-    /// エンジンの1回のPVを表現する。
-    /// 
-    /// USIプロトコルの"info …"で表現されるもの。
-    /// 
-    /// EngineConsiderationControlで用いる、エンジンから送られてきた固定情報(npsなど)
-    /// 片方のエンジン分。
-    /// 
-    /// すべて文字列として保持している。
-    /// 例えばNpsなら使う時は、NpsStringのほうを用いて、セットする時はNpsのsetterを用いる。
+    /// Represents one PV of the engine.
+    /// ///
+    /// What is represented by "info…" in the USI protocol.
+    /// ///
+    /// Fixed information (nps, etc.) sent from the engine used in EngineConsiderationControl
+    /// For one engine.
+    /// ///
+    /// All are kept as character strings.
+    /// For example, when using Nps, use NpsString, and when setting, use Nps setter.
     /// </summary>
     public class UsiThinkReport
     {

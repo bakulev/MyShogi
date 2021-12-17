@@ -201,7 +201,7 @@
             this.toolStripButton12.Name = "toolStripButton12";
             this.toolStripButton12.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton12.Text = "◀";
-            this.toolStripButton12.ToolTipText = "開始局面に戻ります。(検討時)";
+            this.toolStripButton12.ToolTipText = "Return to the starting phase. (At the time of consideration)";
             this.toolStripButton12.Click += new System.EventHandler(this.toolStripButton12_Click);
             // 
             // toolStripButton9
@@ -211,7 +211,7 @@
             this.toolStripButton9.Name = "toolStripButton9";
             this.toolStripButton9.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton9.Text = "◁";
-            this.toolStripButton9.ToolTipText = "一手戻ります。(検討時)";
+            this.toolStripButton9.ToolTipText = "I'll go back one step. (At the time of consideration)";
             this.toolStripButton9.Click += new System.EventHandler(this.toolStripButton9_Click);
             // 
             // toolStripButton10
@@ -221,7 +221,7 @@
             this.toolStripButton10.Name = "toolStripButton10";
             this.toolStripButton10.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton10.Text = "▷";
-            this.toolStripButton10.ToolTipText = "一手進みます。(検討時)";
+            this.toolStripButton10.ToolTipText = "Go one step. (At the time of consideration)";
             this.toolStripButton10.Click += new System.EventHandler(this.toolStripButton10_Click);
             // 
             // toolStripButton13
@@ -231,7 +231,7 @@
             this.toolStripButton13.Name = "toolStripButton13";
             this.toolStripButton13.Size = new System.Drawing.Size(24, 23);
             this.toolStripButton13.Text = "▶";
-            this.toolStripButton13.ToolTipText = "末尾の局面に進めます。(検討時)";
+            this.toolStripButton13.ToolTipText = "Proceed to the last phase. (At the time of consideration)";
             this.toolStripButton13.Click += new System.EventHandler(this.toolStripButton13_Click);
             // 
             // MainDialog

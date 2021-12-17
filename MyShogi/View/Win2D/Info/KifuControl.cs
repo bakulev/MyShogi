@@ -333,22 +333,22 @@ namespace MyShogi.View.Win2D
             listView1.View = System.Windows.Forms.View.Details;
 
             var ply_string = new ColumnHeader();
-            ply_string.Text = "手数";
+            ply_string.Text = "Efforts";
             ply_string.Width = 50;
             ply_string.TextAlign = HorizontalAlignment.Center;
 
             var move_string = new ColumnHeader();
-            move_string.Text = "指し手";
+            move_string.Text = "Move";
             move_string.Width = 100;
             move_string.TextAlign = HorizontalAlignment.Left;
 
             var time_string = new ColumnHeader();
-            time_string.Text = "時間";
+            time_string.Text = "time";
             time_string.Width = 60;
             time_string.TextAlign = HorizontalAlignment.Right;
 
             var sum_time_string = new ColumnHeader();
-            sum_time_string.Text = " 総時間";
+            sum_time_string.Text = " Total time";
             sum_time_string.Width = 0; // これはのちにresizeされる
             sum_time_string.TextAlign = HorizontalAlignment.Left;
 

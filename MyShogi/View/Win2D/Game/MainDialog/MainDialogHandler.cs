@@ -334,7 +334,7 @@ namespace MyShogi.View.Win2D
             {
                 if (gameScreenControl1.gameServer.KifuDirty)
                 {
-                    if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に棋譜を貼り付けますか？", MessageShowType.WarningOkCancel)
+                    if (TheApp.app.MessageShow("There are still unsaved game records. Do you really want to paste the game records?", MessageShowType.WarningOkCancel)
                         != DialogResult.OK)
                         return;
                 }
@@ -556,7 +556,7 @@ namespace MyShogi.View.Win2D
 
             if (gameScreenControl1.gameServer.KifuDirty)
             {
-                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に棋譜を貼り付けますか？", MessageShowType.WarningOkCancel)
+                if (TheApp.app.MessageShow("There are still unsaved game records. Do you really want to paste the game records?", MessageShowType.WarningOkCancel)
                     != DialogResult.OK)
                     return;
             }
@@ -578,13 +578,13 @@ namespace MyShogi.View.Win2D
             e.Cancel = false; // DockWindow側でtrueにしていたはず。
             if (gameScreenControl1.gameServer.InTheGame)
             {
-                if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？", MessageShowType.WarningOkCancel)
+                if (TheApp.app.MessageShow("I'm playing a game, will it really end?", MessageShowType.WarningOkCancel)
                     != DialogResult.OK)
                     e.Cancel = true;
             }
             else if (gameScreenControl1.gameServer.KifuDirty)
             {
-                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.ConfirmationOkCancel)
+                if (TheApp.app.MessageShow("There are still unsaved game records, do you really want to finish?", MessageShowType.ConfirmationOkCancel)
                     != DialogResult.OK)
                     e.Cancel = true;
             }

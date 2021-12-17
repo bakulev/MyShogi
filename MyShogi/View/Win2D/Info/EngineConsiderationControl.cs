@@ -247,7 +247,7 @@ namespace MyShogi.View.Win2D
                             else if (move.To() != Square.NB)
                                 // 非合法手に対してKIF2の文字列を生成しないようにする。(それが表示できるとは限らないので..)
                                 // また、Square.NBはparseに失敗した文字列であるから、これは出力する意味がない。(あえて出力するなら元の文字列を出力してやるべき)
-                                append($"非合法手({ move.Pretty()})");
+                                append($"Illegal hand ({ move.Pretty()})");
 
                             break;
                         }
@@ -570,64 +570,67 @@ namespace MyShogi.View.Win2D
             listView1.Sorting = SortOrder.None;
             listView1.View = System.Windows.Forms.View.Details;
 
-            // ヘッダーのテキストだけセンタリング、実項目は右寄せしたいのだが、これをするには
-            // オーナードローにする必要がある。面倒くさいので、ヘッダーのテキストにpaddingしておく。
-            // またヘッダーの1列目のTextAlignは無視される。これは.NET FrameworkのListViewの昔からあるバグ。(仕様？)
+            // I want to center only the header text and right justify the actual items,
+            // but to do this I need to make it an owner draw. It's annoying, so pad it in the header text.
+            // Also, TextAlign in the first column of the header is ignored.
+            // This is an old bug in the .NET Framework ListView. (specification?)
 
-            // MultiPVの値(1,…)
+            // MultiPV value (1,…)
             var ranking = new ColumnHeader();
             ranking.Text = "R";
             ranking.Width = 40;
             ranking.TextAlign = HorizontalAlignment.Center;
 
             var thinking_time = new ColumnHeader();
-            thinking_time.Text = "経過時間";
+            thinking_time.Text = "elapsed time";
             thinking_time.Width = 140;
             thinking_time.TextAlign = HorizontalAlignment.Center;
 
             var depth = new ColumnHeader();
-            depth.Text = "深さ ";
+            depth.Text = "depth ";
             depth.Width = 100;
             depth.TextAlign = HorizontalAlignment.Right;
 
             var node = new ColumnHeader();
-            node.Text = "探索局面数";
+            node.Text = "Number of search phases";
             node.Width = 180;
             node.TextAlign = HorizontalAlignment.Right;
 
             var eval = new ColumnHeader();
-            eval.Text = "評価値  ";
+            eval.Text = "Evaluation value  ";
             eval.Width = 200;
             eval.TextAlign = HorizontalAlignment.Right;
 
-            // 評価値のScoreBound
+            // Score Bound of evaluation value
             var score_bound = new ColumnHeader();
             score_bound.Text = "+-";
             score_bound.Width = 50;
             score_bound.TextAlign = HorizontalAlignment.Center;
 
             var pv = new ColumnHeader();
-            pv.Text = "読み筋";
+            pv.Text = "Reading line";
             pv.Width = 0;
             pv.TextAlign = HorizontalAlignment.Left;
-            // 読み筋の幅は残り全部。UpdatePvWidth()で調整される。
+            // The width of the reading line is all the rest. Adjusted with UpdatePvWidth ().
 
             var header = new[] { ranking , thinking_time, depth, node, eval, score_bound, pv };
 
             listView1.Columns.AddRange(header);
 
             //listView1.AutoResizeColumns( ColumnHeaderAutoResizeStyle.ColumnContent);
-            // headerとcontentの文字長さを考慮して、横幅が自動調整されて水平スクロールバーで移動してくれるといいのだが、うまくいかない。よくわからない。
+            // Considering the character length of header and content,
+            // it would be nice if the width is automatically adjusted
+            // and moved with the horizontal scroll bar, but it doesn't work. I'm not sure.
 
-            foreach(var index in All.Int(6))
+            foreach (var index in All.Int(6))
             {
                 int w1 = listView1.Columns[index].Width;
                 int w2 = TheApp.app.Config.ConsiderationColumnWidth[index];
-                listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
-                // これだと幅を0にすると保存されなくなってしまうのか…。そうか…。保存するときに1にしておくべきなのか…。
+                listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // If w2 is the value immediately after initialization, it is not adopted.
+                // If this is the case, will it not be saved if the width is set to 0? Really…. Should I set it to 1 when saving ...
             }
 
-            // CPU同士の対局でEngineConsiderationControlが２つあるときに、もう片側にも通知する。
+            // When there are two EngineConsiderationControls in a game between CPUs, the other side is also notified.
             TheApp.app.Config.ConsiderationColumnWidth.AddPropertyChangedHandler((args) =>
             {
                 // 単純assignか。
@@ -639,7 +642,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 読み筋のところに表示する棋譜文字列の生成器の初期化
+        /// Initialization of the generator of the game record string to be displayed at the reading line
         /// </summary>
         private void InitKifuFormatter()
         {
@@ -713,56 +716,57 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 指し手を読み筋に表示する棋譜文字列に変換する。
+        /// Convert the move to a game record string to be displayed on the reader.
         /// </summary>
         /// <param name="p"></param>
         /// <param name="m"></param>
         /// <returns></returns>
         private string move_to_kif_string(Position p, Move m)
         {
-            // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
-            // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
-            // (『Kifu for Windoiws』ではそうなってしまう..)
+            // Special moves cannot be converted properly in the KIF2 format, so convert them yourself.
+            // For example, it is not good if the foul victory by the consecutive checker Sennichite becomes simply "Sennichite".
+            // (This is the case with "Kifu for Windows" ..)
             return m.IsOk() ? kifFormatter.format(p, m) :
                 kifFormatter.format(p.sideToMove) + m.SpecialMoveToKif();
         }
 
         /// <summary>
-        /// [UI Thread] : ヘッダー情報のところに反映させる。
-        /// info.XXXの値がnullになっている項目は書き換えない。
-        /// 書き換えたいならば、string.Emptyを設定すること。
+        /// [UI Thread]: Reflect in the header information.
+        /// Items for which the value of info.XXX is null are not rewritten.
+        /// If you want to rewrite it, set string.Empty.
         /// </summary>
         /// <param name="info"></param>
         private void UpdateHeader(UsiThinkReport info)
         {
-            // .NET FrameworkのTextBox、右端にスペースをpaddingしていて、TextAlignをcenterに設定してもそのスペースを
-            // わざわざ除去してからセンタリングするので(余計なお世話)、TextAlignをLeftに設定して、自前でpaddingする。
+            // TextBox of .NET Framework, space is padded at the right end, and even if TextAlign is set to center,
+            // the space is removed and then centered (extra care), so set TextAlign to Left and do it yourself. Padding.
 
-            // MS UI Gothicは等幅ではないのでスペースでpaddingするとずれる。
-            // TextBoxのフォントは、MS ゴシックに設定する。
+            // MS UI Gothic is not monospaced, so if you pad it with a space, it will shift.
+            // Set the font of TextBox to MS Gothic.
 
             //textBox1.Text = info.PlayerName;
 
             if (info.PonderMove != null)
-                textBox2.Text = $" 予想手 : { info.PonderMove.PadLeftUnicode(6)}";
+                textBox2.Text = $" Predictive hand : { info.PonderMove.PadLeftUnicode(6)}";
 
-            //textBox3.Text = $"探索手：{info.SearchingMove}";
-            // 探索手、エンジン側、まともに出力してると出力だけで時間すごくロスするので
-            // 出力してくるエンジン少なめだから、これ不要だと思う。
+            //textBox3.Text = $"Searching：{info.SearchingMove}";
+            // The searcher, the engine side, if you output properly,
+            // you will lose a lot of time just by outputting,
+            // so the number of engines that output is small, so I think this is unnecessary.
 
-            //textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
-            // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
+            //textBox4.Text = $"depth：{info.Depth}/{info.SelDepth}";
+            // As for the depth, PV is output for each iteration, so this kind of thing is unnecessary.
 
             if (info.NodesString != null)
-                textBox3.Text = $"探索局面数 : { info.NodesString.PadLeftUnicode(12) }";
+                textBox3.Text = $"Number of search phases : { info.NodesString.PadLeftUnicode(12) }";
 
             if (info.NpsString != null)
                 textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(12) }";
 
             if (info.HashPercentageString != null)
             {
-                textBox5.Text = $"HASH使用率 : { info.HashPercentageString.PadLeftUnicode(6) }";
-                // 50%以上なら赤文字にして、HASHが足りないことをアピール。
+                textBox5.Text = $"HASH usage rate : { info.HashPercentageString.PadLeftUnicode(6) }";
+                // If it is 50% or more, make it in red to appeal that HASH is not enough.
                 textBox5.ForeColor = info.HashPercentage < 50 ? Draw.Color.Black : Draw.Color.Red;
             }
         }
@@ -837,8 +841,8 @@ namespace MyShogi.View.Win2D
         /// <param name="sortRanking"></param>
         private void UpdateSortRanking(bool sortRanking)
         {
-            button1.Text = sortRanking ? "R順" : "着順";
-            ClearItems(); // 切り替えたので読み筋クリア
+            button1.Text = sortRanking ? "R order" : "Order of arrival";
+            ClearItems(); // Cleared the reading line because it was switched
         }
 
         // -- private members

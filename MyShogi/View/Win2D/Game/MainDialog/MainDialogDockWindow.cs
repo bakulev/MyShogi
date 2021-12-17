@@ -269,7 +269,7 @@ namespace MyShogi.View.Win2D
                 engineConsiderationDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
                 engineConsiderationDockWindow.Owner = this;
 
-                engineConsiderationDockWindow.ViewModel.Caption = "検討ウインドウ";
+                engineConsiderationDockWindow.ViewModel.Caption = "Review window";
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
@@ -376,7 +376,7 @@ namespace MyShogi.View.Win2D
                 miniShogiBoardDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
                 miniShogiBoardDockWindow.Owner = this;
 
-                miniShogiBoardDockWindow.ViewModel.Caption = "ミニ盤面";
+                miniShogiBoardDockWindow.ViewModel.Caption = "Mini board";
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
@@ -495,7 +495,7 @@ namespace MyShogi.View.Win2D
             // 棋譜が開始局面だけのときは、破壊的変更とは言えないのでその場合は警告を出さないことにする。
             if (gameScreenControl1.gameServer.KifuDirty && gameServer.KifuList.Count > 1)
             {
-                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当にメイン棋譜を置き換えますか？", MessageShowType.WarningOkCancel)
+                if (TheApp.app.MessageShow("There are still unsaved game records, do you really want to replace the main game record?", MessageShowType.WarningOkCancel)
                     != DialogResult.OK)
                     return;
             }
