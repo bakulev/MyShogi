@@ -3,19 +3,19 @@
 namespace MyShogi.Model.Shogi.Kifu
 {
     /// <summary>
-    /// 思考ログなどのプロパティ集合
+    /// Property set such as thought log
     /// </summary>
     public class KifuLog
     {
         /// <summary>
-        /// この指し手に対する思考ログ(エンジンによって出力される)
-        /// この指し手のための"go"コマンドによって最後に出力された PV , 評価値など
+        /// Thought log for this move (output by the engine)
+        /// Last output PV, evaluation value, etc. by the "go" command for this move
         /// </summary>
         public string engineComment;
 
         /// <summary>
-        /// この指し手を指した時刻(書きたければ)
-        /// rootの局面では対局開始日時が入る。
+        /// Time when this move was pointed (if you want to write)
+        /// In the root phase, the start date and time of the game is entered.
         /// </summary>
         public DateTime moveTime;
     }

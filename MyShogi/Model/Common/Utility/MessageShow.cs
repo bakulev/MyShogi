@@ -23,7 +23,7 @@ namespace MyShogi.Model.Common.Utility
     public static class MessageShowTypeExtensions
     {
         /// <summary>
-        /// MessageShowType型を綺麗な日本語文字列に変換
+        /// Convert MessageShowType type to a beautiful Japanese string
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -33,18 +33,18 @@ namespace MyShogi.Model.Common.Utility
             {
                 case MessageShowType.Information:
                 case MessageShowType.InformationOkCancel:
-                    return "通知";
+                    return "Information";
                 case MessageShowType.Warning:
                 case MessageShowType.WarningOkCancel:
-                    return "警告";
+                    return "Warning";
                 case MessageShowType.Error:
                 case MessageShowType.ErrorOkCancel:
-                    return "エラー";
+                    return "Error";
                 case MessageShowType.Confirmation:
                 case MessageShowType.ConfirmationOkCancel:
-                    return "確認";
+                    return "Confirmation";
                 case MessageShowType.Exception:
-                    return "例外";
+                    return "Exception";
 
                 default: return "";
             }

@@ -29,7 +29,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuMoveTimes kifuMoveTimes;
 
         /// <summary>
-        /// nextMoveを指したときの次の局面
+        /// The next aspect when pointing to nextMove
         /// </summary>
         public KifuNode nextNode;
 

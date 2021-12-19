@@ -119,6 +119,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         var misc = config.GameSetting.MiscSettings;
                         if (!kifuManager.Tree.DoMoveUI(m, misc))
                             return;
+                        //kifuManager.Tree.AddNodeComment(m, "My move 2");
 
                         // DoMoveに成功したので駒音を再生する。
                         PlayPieceSound(GameMode, m.To(), stm);
@@ -345,7 +346,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 棋譜のファイルへの書き出しコマンド
+        /// Command to write game record to file
         /// </summary>
         /// <param name="path"></param>
         /// <param name="type"></param>
@@ -354,20 +355,20 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                // ゲーム中でも書き出せる
-                // (メニュー上、オフにはなっているが..)
+                // Can be exported even in the game
+                // (Although it is off on the menu ..)
 
                 try
                 {
                     var content = kifuManager.ToString(type);
                     FileIO.WriteFile(path, content);
 
-                    // 棋譜が綺麗になった扱いにする。
+                    // Treat the game record as clean.
                     KifuDirty = false;
                 }
                 catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\r\n{ex.Pretty()}" , MessageShowType.Error);
+                    TheApp.app.MessageShow($"Failed to export the game record file.\r\n{ex.Pretty()}" , MessageShowType.Error);
                 }
             });
         }
@@ -477,14 +478,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 棋譜の次分岐に移動するボタン
+        /// Button to move to the next branch of the game record
         /// </summary>
         public void NextBranchButtonCommand(PropertyChangedEventArgs args)
         {
             AddCommand(
             () =>
             {
-                // 対局中は使用不可
+                // Cannot be used during the game
                 if (GameMode.IsConsideration())
                 {
                     kifuManager.Tree.NextBranch();

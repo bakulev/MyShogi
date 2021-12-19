@@ -3,7 +3,7 @@
 namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
-    /// 指し手生成
+    /// Move generation
     /// </summary>
     public static class MoveGen
     {
@@ -18,41 +18,45 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public static int LegalAll(Position pos , Move[] moves, int startIndex)
         {
-            /// Position.IsLegal()が完璧に非合法手を弾くので、NonEvalsion()で指し手を生成して
-            /// FilterNonLegalMoves()で排除する。少し遅くなるが、Evasionそんなにないからいいだろう…。
+            /// Position.IsLegal () plays the illegal move perfectly,
+            /// so create a move with NonEvalsion () and eliminate it
+            /// with FilterNonLegalMoves ().
+            /// It's a little late, but it's okay because Evasion isn't that much ...
 
-            // 愚直に81升調べてもどうってことないはずだが最低限の高速化をしとく
+            // It shouldn't be a problem if you look up
+            // 81 squares honestly, but try to speed up to the minimum.
             var endIndex = startIndex;
 
             var us = pos.sideToMove;
-            var ourPieces = pos.Pieces(us); // 自駒
+            var ourPieces = pos.Pieces(us); // Own piece
             Square from , to;
-            var enemyField = Bitboard.EnemyField(us); // 敵陣
+            var enemyField = Bitboard.EnemyField(us); // Enemy
 
-            // 自分から見た1段目
+            // The first stage seen from myself
             var rank1_for_us = us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9;
             var rank2_for_us = us == Color.BLACK ? Rank.RANK_2 : Rank.RANK_8;
 
-            // 自駒がないところ(移動先の候補)
+            // Where there is no own piece (candidate for destination)
             var movable = ~ pos.Pieces(us);
 
             while (ourPieces.IsNotZero())
             {
                 from = ourPieces.Pop();
-                Piece pc = pos.PieceOn(from); // 移動元の駒
+                Piece pc = pos.PieceOn(from); // The piece from which it was moved
                 Piece pt = pc.PieceType();
 
-                // pcに駒を置いたときの利きに移動できて、自駒があるところには移動できない
+                // You can move to the dominant point when you put the piece on the pc,
+                // but you can not move to the place where your piece is
                 var target = Bitboard.EffectsFrom(pc, from, pos.Pieces()) & movable;
                 while (target.IsNotZero())
                 {
                     to = target.Pop();
 
-                    // pcをfromからtoに移動させる指し手を生成する
+                    // Generate a move to move pc from from to to
 
                     var r = to.ToRank();
 
-                    // 行き場のない升への移動は非合法手なのでそれを除外して指し手生成
+                    // Moving to a box with nowhere to go is an illegal move, so exclude it and generate a move
                     if (!
                         (((pt == Piece.PAWN || pt == Piece.LANCE) && r == rank1_for_us)
                         ||(pt == Piece.KNIGHT && (r == rank1_for_us || r== rank2_for_us)))
@@ -60,9 +64,9 @@ namespace MyShogi.Model.Shogi.Core
 
                         moves[endIndex++] = Util.MakeMove(from, to);
 
-                    // 成れる条件
-                    //   1.移動させるのが成れる駒
-                    //   2.移動先もしくは移動元が敵陣
+                    // Conditions to be formed
+                    //   1.Pieces that can be moved
+                    //   2.The destination or source is the enemy
                     if ((Piece.PAWN <= pt && pt < Piece.GOLD)
                         && (enemyField & (new Bitboard(from) | new Bitboard(to))).IsNotZero())
 
@@ -70,28 +74,28 @@ namespace MyShogi.Model.Shogi.Core
                 }
             }
 
-            // 駒打ちの指し手
+            // Komauchi move
 
             var h = pos.Hand(us);
             for (Piece pt = Piece.PAWN; pt < Piece.KING; ++pt)
             {
-                // その駒を持っていないならskip
+                // Skip if you don't have that piece
                 if (h.Count(pt) == 0)
                     continue;
 
                 for (to = Square.ZERO; to < Square.NB; ++to)
                 {
-                    // 駒がない升にしか打てない
+                    // You can only hit a box without a piece
                     if (pos.PieceOn(to) != Piece.NO_PIECE)
                         continue;
 
-                    // 行き場のない駒は打てない
+                    // I can't hit a piece that has no place to go
                     var r = to.ToRank();
                     if (((pt == Piece.PAWN || pt == Piece.LANCE) && r == rank1_for_us)
                       || (pt == Piece.KNIGHT && (r == rank1_for_us || r == rank2_for_us)))
                         continue;
 
-                    // 二歩のチェックだけしとく
+                    // Only check two steps
                     if (pt == Piece.PAWN
                         && (pos.Pieces(us , Piece.PAWN) & Bitboard.FileBB(to.ToFile())).IsNotZero())
                         continue;
@@ -100,7 +104,7 @@ namespace MyShogi.Model.Shogi.Core
                 }
             }
 
-            // 非合法手を除外する。
+            // Exclude illegal hands.
 
             int p = startIndex;
             while (p < endIndex)
@@ -109,13 +113,13 @@ namespace MyShogi.Model.Shogi.Core
                 if (pos.IsLegal(m))
                     ++p;
                 else
-                    moves[p] = moves[--endIndex]; // 非合法手でなかったので最後の指し手をここに埋める
+                    moves[p] = moves[--endIndex]; // It wasn't an illegal move, so fill in the last move here
             }
             return endIndex;
         }
 
         /// <summary>
-        /// 現在の局面で合法手をすべて生成してそれを出力する(デバッグ用)
+        /// Generate all legal moves in the current phase and output them (for debugging)
         /// </summary>
         /// <param name="pos"></param>
         public static void GenTest(Position pos)

@@ -52,7 +52,7 @@ namespace MyShogi.View.Win2D
             {
                 // 例外のときは、テキストボックスに書く。
 
-                textBox2.Text = "エラーが発生しました。詳細は以下の通りです。";
+                textBox2.Text = "An error has occurred. The details are as follows.";
 
                 textBox1.Text = text;
                 textBox1.SelectionStart = 0;

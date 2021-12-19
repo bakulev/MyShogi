@@ -363,7 +363,7 @@ namespace MyShogi.Model.Shogi.Core
     public static partial class Util
     {
         /// <summary>
-        /// fromからtoに移動する指し手を生成して返す(16bitの指し手)
+        /// Generates and returns a move that moves from from to to (16-bit move)
         /// </summary>
         public static Move MakeMove(Square from, Square to)
         {

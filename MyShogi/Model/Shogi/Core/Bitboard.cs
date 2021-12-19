@@ -563,8 +563,9 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 盤上sqに駒pc(先後の区別あり)を置いたときの利き。
-        /// pc == QUEENだと馬+龍の利きが返る。
+        /// The advantage when the piece pc (there is a distinction between
+        /// the front and the back) is placed on the sq on the board.
+        /// pc == QUEEN will return the power of horse + dragon.
         /// </summary>
         /// <returns></returns>
         public static Bitboard EffectsFrom(Piece pc, Square sq, Bitboard occ)

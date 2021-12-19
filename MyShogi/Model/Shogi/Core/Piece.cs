@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
-    /// 駒を表す定数
+    /// Constant representing a piece
     /// </summary>
     /// <remarks>
     /// PAWN   : 歩
@@ -31,18 +31,18 @@ namespace MyShogi.Model.Shogi.Core
         PROMOTE = 8, // 成りを表す
         WHITE = 16,  // 後手を表す
 
-        ZERO = 0,    // Pieceの開始番号
-        NB = 32,     // Pieceの終端を表す 
+        ZERO = 0,    // Piece start number
+        NB = 32,     // Represents the end of a piece
 
-        // 以下、先後の区別のある駒(Bがついているのは先手、Wがついているのは後手)
+        // Below, the pieces with distinction between the first and the second (B is attached to the first move, W is attached to the second move)
         B_PAWN = 1, B_LANCE, B_KNIGHT, B_SILVER, B_BISHOP, B_ROOK, B_GOLD, B_KING, B_PRO_PAWN, B_PRO_LANCE, B_PRO_KNIGHT, B_PRO_SILVER, B_HORSE, B_DRAGON, B_QUEEN,
         W_PAWN = 17, W_LANCE, W_KNIGHT, W_SILVER, W_BISHOP, W_ROOK, W_GOLD, W_KING, W_PRO_PAWN, W_PRO_LANCE, W_PRO_KNIGHT, W_PRO_SILVER, W_HORSE, W_DRAGON, W_QUEEN,
 
         HAND_NB = KING,   // 手駒になる駒種の最大+1
 
-        // --- Position::pieces()で用いる定数。空いてるところを順番に用いる。
-        ALL_PIECES = 0,         // 駒がある升を示すBitboardが返る。
-        GOLDS = QUEEN,          // 金と同じ移動特性を持つ駒のBitboardが返る。
+        // --- Position::pieces() Constant used in. Use the vacant places in order.
+        ALL_PIECES = 0,         // A Bitboard is returned to indicate the square in which the piece is located.
+        GOLDS = QUEEN,          // The Bitboard of the piece that has the same movement characteristics as gold is returned.
         HDK,                    // H=Horse,D=Dragon,K=Kingの合体したBitboardが返る。
         BISHOP_HORSE,           // BISHOP,HORSEを合成したBitboardが返る。
         ROOK_DRAGON,            // ROOK,DRAGONを合成したBitboardが返る。
@@ -96,7 +96,7 @@ namespace MyShogi.Model.Shogi.Core
         private const string USI_PIECE = ". P L N S B R G K +P+L+N+S+B+R+G+.p l n s b r g k +p+l+n+s+b+r+g+k";
 
         /// <summary>
-        /// USI文字列に変換する。
+        /// Convert to USI string.
         /// </summary>
         /// <param name="piece"></param>
         /// <returns></returns>
@@ -107,7 +107,7 @@ namespace MyShogi.Model.Shogi.Core
 
             var p = (int)piece.ToInt();
 
-            // 末尾の人力trim
+            // Human power trim at the end
             var length = (USI_PIECE[p * 2 + 1] == ' ') ? 1 : 2;
             return USI_PIECE.Substring(p * 2, length);
         }
@@ -122,7 +122,8 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 後手の歩→先手の歩のように、後手という属性を取り払った駒種を返す
+        /// Return the piece type with the attribute of the second move removed,
+        /// like the step of the second move → the step of the first move
         /// </summary>
         public static Piece PieceType(this Piece piece)
         {

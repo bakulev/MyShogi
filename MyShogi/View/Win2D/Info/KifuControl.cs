@@ -14,9 +14,9 @@ namespace MyShogi.View.Win2D
     public partial class KifuControl : UserControl
     {
         /// <summary>
-        /// 棋譜表示用のコントロール
+        /// Control for displaying game records
         ///
-        /// InitViewModel(Form)を初期化のために必ず呼び出すこと。
+        /// Be sure to call InitViewModel (Form) for initialization.
         /// </summary>
         public KifuControl()
         {
@@ -36,9 +36,9 @@ namespace MyShogi.View.Win2D
         public class KifuControlViewModel : NotifyObject
         {
             /// <summary>
-            /// 棋譜リスト上の現在選択されている行
+            /// Currently selected line on the game record list
             /// 
-            /// 双方向databindによって、LocalGameServerの同名のプロパティと紐付けられている。
+            /// It is associated with the property of the same name in LocalGameServer by bidirectional databind.
             /// </summary>
             public int KifuListSelectedIndex
             {
@@ -47,7 +47,7 @@ namespace MyShogi.View.Win2D
             }
 
             /// <summary>
-            /// KifuListSelectedIndexの値を変更して、イベントを発生させない。
+            /// Change the value of KifuListSelectedIndex so that the event does not occur.
             /// </summary>
             /// <param name="i"></param>
             public void SetKifuListSelectedIndex(int i)
@@ -56,41 +56,42 @@ namespace MyShogi.View.Win2D
             }
 
             /// <summary>
-            /// 棋譜リストの項目の数。KifuListSelectedIndexをこれより進めるべきではない。
+            /// The number of items in the game record list.
+            /// The KifuListSelectedIndex should not go any further.
             /// </summary>
             public int KifuListCount;
 
             /// <summary>
-            /// KifuListを表現する仮想プロパティ
-            /// LocalGameServerの同名のプロパティとDataBindによって接続されていて、
-            /// あちらで更新があると、これらのプロパティの更新通知が来るのでそれをハンドルする。
+            /// Virtual property representing KifuList
+            /// Connected by a DataBind with a property of the same name in LocalGameServer,
+            /// If there is an update over there, you'll get an update notification for these properties and handle it.
             /// </summary>
             public List<KifuListRow> KifuList = new List<KifuListRow>();
             public string KifuListAdded;
             public object KifuListRemoved;
 
             /// <summary>
-            /// 本譜ボタンがクリックされた。
+            /// The main score button was clicked.
             /// </summary>
             public object MainBranchButtonClicked;
 
             /// <summary>
-            /// 次分岐ボタンがクリックされた。
+            /// The next branch button was clicked.
             /// </summary>
             public object NextBranchButtonClicked;
 
             /// <summary>
-            /// 分岐削除ボタンがクリックされた。
+            /// The branch delete button was clicked.
             /// </summary>
             public object EraseBranchButtonClicked;
 
             /// <summary>
-            /// 最後の指し手を削除する。
+            /// Delete the last move.
             /// </summary>
             public object RemoveLastMoveClicked;
 
             /// <summary>
-            /// フローティングモードなのかなどを表す。
+            /// Indicates whether it is in floating mode.
             /// </summary>
             public DockState DockState
             {
@@ -99,8 +100,8 @@ namespace MyShogi.View.Win2D
             }
 
             /// <summary>
-            /// LocalGameServer.InTheGameModeが変更されたときに呼び出されるハンドラ
-            /// 「本譜」ボタン、「次分岐」ボタンなどを非表示/表示を切り替える。
+            /// Handler called when LocalGameServer.InTheGameMode changes
+            /// Hide / show the "main score" button, "next branch" button, etc.
             /// </summary>
             public bool InTheGame
             {
@@ -112,7 +113,7 @@ namespace MyShogi.View.Win2D
         public KifuControlViewModel ViewModel = new KifuControlViewModel();
 
         /// <summary>
-        /// 外部から初期化して欲しい。
+        /// I want you to initialize it from the outside.
         /// </summary>
         /// <param name="parent"></param>
         public void InitViewModel(Form parent)
@@ -125,18 +126,18 @@ namespace MyShogi.View.Win2D
         }
 
         ///// <summary>
-        ///// [UI Thread] : 表示している棋譜の行数
+        ///// [UI Thread] : Number of lines in the displayed game record
         ///// </summary>
         //public int KifuListCount
         //{
         //    get { return listBox1.Items.Count; }
         //}
 
-        // -- 以下、棋譜ウインドウに対するオペレーション
+        // -- Below, the operation for the game record window
 
         /// <summary>
-        /// [UI Thread] : 棋譜ウィンドウ上、一手戻るボタン
-        /// 局面が一手戻るとは限らない。
+        /// [UI Thread] : One move back button on the game record window
+        /// The situation does not always go back.
         /// </summary>
         public void RewindKifuListIndex()
         {
@@ -144,8 +145,8 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI Thread] : 棋譜ウィンドウ上、一手進むボタン
-        /// 局面が一手進むとは限らない。
+        /// [UI Thread] : Button to move forward on the game record window
+        /// The situation does not always go one step further.
         /// </summary>
         public void ForwardKifuListIndex()
         {
@@ -153,15 +154,15 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// ListViewの4列目(総消費時間)を残りいっぱいサイズにする。
+        /// Set the 4th column (total consumption time) of ListView to the remaining full size.
         /// 
-        /// ※ 4列目を表示していない時は3列目が残り幅いっぱいになるようにする。
+        /// * When the 4th column is not displayed, make sure that the 3rd column is full of the remaining width.
         /// </summary>
         private void UpdateListViewColumnWidth()
         {
             var col = listView1.Columns;
 
-            // Column 生成前
+            // Column Before generation
             if (col.Count == 0)
                 return;
 
@@ -172,28 +173,31 @@ namespace MyShogi.View.Win2D
                 foreach (var i in All.Int(last))
                     sum += col[i].Width;
 
-                // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
-                // ClientSizeはスクロールバーを除外したサイズ。
-                // →　スクロールバーが出ていない状態で計算して、
-                // そのあとスクロールバーが出ると困るのだが…。押し戻す処理をするか。
-                // スクロールバーを常に表示するモードがないので、スクロールバーが出ているならその分を控えて計算するか。
+                // If you don't set this properly, the horizontal scroll bar will appear.
+                // ClientSize is the size excluding the scroll bar.
+                // → It would be a problem if the calculation was performed without the
+                // scroll bar appearing and then the scroll bar appeared. Do you want to push it back?
+                // Since there is no mode to always display the scroll bar,
+                // if the scroll bar is displayed, do you calculate by writing down that amount?
 
-                // スクロールバーが10pxより小さいことはありえないので、それを超えているならスクロールバーが出ている。
+                // The scrollbar can't be smaller than 10px, so if it's above that, the scrollbar is out.
                 /*
                 var scrollbar = listView1.Width - listView1.ClientSize.Width > 10;
                 var width = scrollbar ?
                     listView1.ClientSize.Width :
-                    listView1.ClientSize.Width - 22; // 実測でこれくらい high dpiだと変わるかも..
+                    listView1.ClientSize.Width - 22; // Actually, it may change if it is this high dpi ..
                 */
-                // →　これやめる。スクロールバーが出るとClientSizeが変化するのだから、そのときリサイズイベントが起きるのでは。
+                // → Stop this. Since ClientSize changes when the scroll bar appears,
+                // a resizing event may occur at that time.
 
                 var width = listView1.ClientSize.Width;
                 var newWidth = Math.Max(width - sum, 0);
 
-                // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
-                // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
+                // Even if you set a negative value for Width, it will be compensated to 0.
+                // As a result, without Max () above, newWidth is negative
+                // This if holds, and an event is generated by the assignment, so it becomes infinite recursion.
                 if (col[last].Width != newWidth)
-                    col[last].Width = newWidth; //残りいっぱい分にする
+                    col[last].Width = newWidth; //Fill the rest
             }
         }
 
@@ -349,10 +353,10 @@ namespace MyShogi.View.Win2D
 
             var sum_time_string = new ColumnHeader();
             sum_time_string.Text = " Total time";
-            sum_time_string.Width = 0; // これはのちにresizeされる
+            sum_time_string.Width = 0; // This will be resized later
             sum_time_string.TextAlign = HorizontalAlignment.Left;
 
-            // 総消費時間を表示するのか(これは再起動後に有効)
+            // Do you want to show the total time spent (this is valid after a reboot)
             enable_total_time = TheApp.app.Config.KifuWindowDisplayTotalTime != 0;
 
             var header = enable_total_time ?
@@ -367,14 +371,14 @@ namespace MyShogi.View.Win2D
             {
                 int w1 = listView1.Columns[index].Width;
                 int w2 = TheApp.app.Config.KifuColumnWidth[index];
-                listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
-                // これだと幅を0にすると保存されなくなってしまうのか…。そうか…。保存するときに1にしておくべきなのか…。
+                listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // If w2 is the value immediately after initialization, it is not adopted.
+                // If this is the case, will it not be saved if the width is set to 0? Really…. Should I set it to 1 when saving ...
             }
 
         }
 
         /// <summary>
-        /// 総消費時間を表示するのか(これは再起動後に有効なので起動時の値を保持しておく)
+        /// Do you want to display the total consumption time (this is valid after rebooting, so keep the value at startup)
         /// </summary>
         private bool enable_total_time;
 
@@ -423,7 +427,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI thread] : リストが1行削除されたときに呼び出されるハンドラ
+        /// [UI thread] : Handler called when one row of list is deleted
         /// </summary>
         private void KifuListRemoved(PropertyChangedEventArgs args)
         {

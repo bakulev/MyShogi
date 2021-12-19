@@ -66,7 +66,7 @@ namespace MyShogi.Model.Shogi.Usi
     }
 
     /// <summary>
-    /// エンジンが読み筋などを返す時の構造体
+    /// Structure when the engine returns reading lines etc.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>

@@ -423,14 +423,14 @@ namespace MyShogi.Model.Shogi.Kifu
 
 
         /// <summary>
-        /// PSN形式で書き出す。
+        /// Export in PSN format.
         /// </summary>
         /// <returns></returns>
         private string ToPsnString(KifuFileType kt)
         {
             var sb = new StringBuilder();
 
-            // 対局者名
+            // Player name
             if (kt == KifuFileType.PSN)
             {
                 sb.AppendLine(string.Format(@"[Sente ""{0}""]", KifuHeader.PlayerNameBlack));
@@ -441,20 +441,20 @@ namespace MyShogi.Model.Shogi.Kifu
                 sb.AppendLine(string.Format(@"[Black ""{0}""]", KifuHeader.PlayerNameBlack));
                 sb.AppendLine(string.Format(@"[White ""{0}""]", KifuHeader.PlayerNameWhite));
 
-                // 持ち時間設定も合わせて書き出す
+                // Export the time setting as well
                 sb.AppendLine($"[BlackTimeSetting \"{Tree.KifuTimeSettings.Player(Color.BLACK).ToKifuString()}\"]");
                 sb.AppendLine($"[WhiteTimeSetting \"{Tree.KifuTimeSettings.Player(Color.WHITE).ToKifuString()}\"]");
             }
 
-            // 初期局面
+            // Initial phase
             sb.AppendLine(string.Format(@"[SFEN ""{0}""]", Tree.position.ToSfen()));
 
-            // -- 局面を出力していく
+            // -- Output the phase
 
-            // Treeのmoves[0]を選択してDoMove()を繰り返したものがPVで、これを最初に出力しなければならないから、
-            // わりと難しい。
+            // PV is the one that selects moves [0] of Tree and repeats DoMove (),
+            // and it is rather difficult because this must be output first.
 
-            // 再帰で書くの難しいので分岐地点をstackに積んでいく実装。
+            // Since it is difficult to write by recursion, implementation that stacks branch points on the stack.
 
             var stack = new Stack<Node>();
 
@@ -466,7 +466,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (endNode)
                 {
                     endNode = false;
-                    // 次の分岐まで巻き戻して、また出力していく。
+                    // Rewind to the next branch and output again.
 
                     var node = stack.Pop();
 
@@ -483,15 +483,15 @@ namespace MyShogi.Model.Shogi.Kifu
                 int count = Tree.currentNode.moves.Count;
                 if (count == 0)
                 {
-                    // ここで指し手終わっとる。終端ノードであるな。
+                    // The move ends here. It's a terminal node.
                     endNode = true;
                     continue;
                 }
 
-                // このnodeの分岐の数
+                // Number of branches in this node
                 if (count != 1)
                 {
-                    // あとで分岐しないといけないので残りをstackに記録しておく
+                    // I have to branch later, so record the rest on the stack
                     for (int i = 1; i < count; ++i)
                         stack.Push(new Node(Tree.gamePly, i));
                 }
@@ -500,14 +500,14 @@ namespace MyShogi.Model.Shogi.Kifu
                 var move = Tree.currentNode.moves[select];
                 var m = move.nextMove;
 
-                // DoMove()する前の現局面の手番
+                // The current turn before DoMove ()
                 var turn = Tree.position.sideToMove;
 
                 string mes;
 
                 if (m.IsSpecial())
                 {
-                    // 特殊な指し手なら、それを出力して終わり。
+                    // If it is a special move, output it and finish.
 
                     endNode = true;
 
@@ -546,7 +546,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 }
                 else
                 {
-                    // この指し手を出力する
+                    // Output this move
                     if (kt == KifuFileType.PSN)
                     {
                         var to = m.To();
@@ -566,7 +566,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
                     }
                     else if (kt == KifuFileType.PSN2)
-                        // PSN2形式なら指し手表現はUSIの指し手文字列そのまま!!簡単すぎ!!
+                        // In PSN2 format, the move expression is the same as the USI move character string !! It's too easy !!
                         mes = string.Format("{0}.{1}", Tree.gamePly, m.ToUsi());
                     else
                         mes = "";
@@ -579,7 +579,11 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 var time_string2 = move.kifuMoveTimes.Player(turn).TotalTime.ToString("hh\\:mm\\:ss");
 
-                sb.AppendLine(string.Format("{0,-18}({1} / {2})", mes, time_string1, time_string2));
+                //sb.AppendLine(string.Format("{0,-18}({1} / {2})", mes, time_string1, time_string2));
+
+                var comment_string = Tree.currentNode.comment;
+                // add comment from a node
+                sb.AppendLine(string.Format("{0,-18} {1}", mes, comment_string));
             }
 
             return sb.ToString();

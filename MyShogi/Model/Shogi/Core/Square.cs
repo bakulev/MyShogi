@@ -125,9 +125,9 @@ namespace MyShogi.Model.Shogi.Core
         };
 
         /// <summary>
-        /// その升の属する段を返す。
+        /// Returns the stage to which the box belongs.
         ///
-        /// Square.NBに対してはRank.NBが返る。
+        /// Rank.NB is returned for Square.NB.
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>

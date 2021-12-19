@@ -12,16 +12,16 @@ using MyShogi.Model.Shogi.LocalServer;
 namespace MyShogi.Model.Shogi.Kifu
 {
     /// <summary>
-    /// 棋譜本体。
-    /// 分岐棋譜の管理。
-    /// 現在の局面の管理。
+    /// The main body of the game record.
+    /// Management of branch game records.
+    /// Management of the current phase.
     /// </summary>
     public class KifuTree : NotifyObject
     {
         /// <summary>
-        /// コンストラクタ
+        /// constructor
         ///
-        /// このクラスが内部的なPositionのインスタンスも保持している。
+        /// This class also holds an instance of the internal Position.
         /// </summary>
         public KifuTree()
         {
@@ -35,7 +35,7 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 棋譜の表示形式。現在のGlobalOptionの値を反映させる。
+        /// Display format of game records. Reflect the current Global Option value.
         /// </summary>
         private void InitKifuFormatter()
         {
@@ -63,8 +63,9 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 初期化する。new KifuTree()した状態に戻る。
-        /// ただし、EnableKifuList == falseだと棋譜リストの初期化されないので、リセットしたいならResetKifuList()を明示的に呼び出す必要がある。
+        /// initialize. It returns to the state of new KifuTree ().
+        /// However, if EnableKifuList == false, the game record list will not be initialized,
+        /// so if you want to reset it, you need to explicitly call ResetKifuList ().
         /// </summary>
         public void Init()
         {
@@ -74,11 +75,12 @@ namespace MyShogi.Model.Shogi.Kifu
 
             SetRootBoardType(BoardType.NoHandicap);
 
-            // rootSfenのsetterで初期化されているのでここではKifuList、UsiMoveListの初期化はしない
+            // Since it is initialized by the setter of rootSfen,
+            // KifuList and UsiMoveList are not initialized here.
             //KifuList = new List<string>();
             //UsiMoveList = new List<string>();
 
-            // 対局情報などを保存するためにここを確保する。
+            // Secure here to store game information and so on.
             rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
             kifuWindowMoves = new List<KifuMove>();
@@ -101,24 +103,27 @@ namespace MyShogi.Model.Shogi.Kifu
         public Position position { get; private set; }
 
         /// <summary>
-        /// 棋譜の初期局面を示すnode。これを数珠つなぎに、樹形図状に持っている。
+        /// A node that shows the initial phase of the game record.
+        /// I have this in a tree-like pattern, connecting the beads.
         /// </summary>
         public KifuNode rootNode;
 
         /// <summary>
-        /// posの現在の局面に対応するKifuNode
+        /// KifuNode corresponding to the current aspect of pos
         /// </summary>
         public KifuNode currentNode;
 
         /// <summary>
-        /// rootの局面に至るための仮想的なKifuMove
-        /// ここに対局日の情報、対局開始局面の棋譜コメント、対局開始時の持ち時間などが記載される。
+        /// Virtual KifuMove to reach the root phase Information on the game date,
+        /// game record comments on the game start phase,
+        /// time at the start of the game, etc. are described here.
         /// </summary>
         public KifuMove rootKifuMove;
 
         /// <summary>
-        /// DoMove()で1手加算され、UndoMove()で1手減算される。
-        /// 何手目の局面であるか。sfenを渡して初期化した場合、rootNodeが1以外の数から始まるので注意。
+        /// DoMove () adds 1 move and UndoMove () subtracts 1 move.
+        /// What is the phase of the move? Note that if you pass sfen and initialize it,
+        /// rootNode will start with a number other than 1.
         /// </summary>
         public int gamePly { get { return position.gamePly; } }
 
@@ -129,8 +134,8 @@ namespace MyShogi.Model.Shogi.Kifu
         public int pliesFromRoot { get; private set; }
 
         /// <summary>
-        /// 棋譜ファイルからの入出力絡み
-        /// 対局者氏名などもここから取り出す。
+        /// Input / output related from the game record file
+        /// The player's name etc. are also extracted from here.
         /// </summary>
         public KifuHeader KifuHeader { get; set; } = new KifuHeader();
 
@@ -234,12 +239,12 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 棋譜リストの初期化。(イベントは発生しない)
+        /// Initialization of the game record list. (Event does not occur)
         /// </summary>
         public void ResetKifuList()
         {
             KifuList = new List<KifuListRow>();
-            KifuList.Add(new KifuListRow("===", "開始局面", "===" , "00:00:00"));
+            KifuList.Add(new KifuListRow("===", "Starting phase", "===" , "00:00:00"));
         }
 
         /// <summary>
@@ -405,8 +410,8 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 指し手mで進める。
-        /// mは、currentNodeのもつ指し手の一つであるものとする。
+        /// Proceed with move m.
+        /// It is assumed that m is one of the moves of the currentNode.
         /// </summary>
         /// <param name="m"></param>
         public void DoMove(Move m)
@@ -462,7 +467,7 @@ namespace MyShogi.Model.Shogi.Kifu
             var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
             if (m == null)
             {
-                // -- 見つからなかったので次のnodeを追加してやる
+                // -- I couldn't find it, so I'll add the next node
 
                 var nextNode = new KifuNode(currentNode);
                 currentNode.moves.Add(new KifuMove(move, nextNode, kifuMoveTimes));
@@ -470,7 +475,7 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// ある指し手に対するノードコメントを追加する。
+        /// Add a node comment for a move.
         /// </summary>
         /// <param name="move"></param>
         /// <param name="comment"></param>
@@ -481,7 +486,7 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// ある指し手に対する着手時刻を追加する。
+        /// Add the start time for a move.
         /// </summary>
         /// <param name="move"></param>
         /// <param name="comment"></param>
@@ -492,7 +497,7 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// ある指し手に対する着手時刻を追加する。
+        /// Add the start time for a move.
         /// </summary>
         /// <param name="move"></param>
         /// <param name="comment"></param>
@@ -726,29 +731,29 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 次の分岐を選ぶボタン
+        /// Button to select the next branch
         /// </summary>
         public void NextBranch()
         {
-            // 1つ前のnodeがなければNG
+            // NG if there is no previous node
             var prev = currentNode.prevNode;
             if (prev == null)
                 return;
 
-            // 分岐がなければNG
+            // NG if there is no branch
             if (prev.moves.Count <= 1)
                 return;
 
-            // 分岐があるので次の分岐を選択して、棋譜ウィンドウを更新する。
+            // Since there is a branch, select the next branch to update the game record window.
             int n = prev.moves.FindIndex((x) => x.nextNode == currentNode);
-            int n2 = (n + 1) % prev.moves.Count; /* 次分岐 */
+            int n2 = (n + 1) % prev.moves.Count; /* Next branch */
 
             PropertyChangedEventEnable = false;
 
-            // このnodeに来て、n2を選択してKifuListを更新する。
+            // Come to this node and select n2 to update KifuList.
             UndoMove();
 
-            // 現在行以降のKifuList、KifuMovesを削除
+            // Delete KifuList and KifuMoves after the current line
             ClearKifuForward();
 
             var e = EnableKifuList;
@@ -759,12 +764,12 @@ namespace MyShogi.Model.Shogi.Kifu
             int ply = 0;
             for (; currentNode.moves.Count != 0 ; ++ply)
             {
-                var move = currentNode.moves[0]; // 0を選んでいく。
+                var move = currentNode.moves[0]; // Select 0.
 
-                // この指し手のlegalityは担保されている。(special moveであってもDoMove()は出来る)
+                // The legality of this move is guaranteed. (DoMove () can be done even with special move)
                 DoMove(move);
             }
-            EnableKifuList = false; // 棋譜リストの更新が終わったので棋譜Windowをフリーズ
+            EnableKifuList = false; // Freeze the game record window because the game record list has been updated.
             for (; ply > 0; --ply)
                 UndoMove();
 
@@ -773,7 +778,7 @@ namespace MyShogi.Model.Shogi.Kifu
             RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
 
-            EnableKifuList = e; // 元の値
+            EnableKifuList = e; // Original value
         }
 
         /// <summary>
@@ -1025,13 +1030,14 @@ namespace MyShogi.Model.Shogi.Kifu
             }
             else
             {
-                // -- 次のnodeとして存在しなかったのでnodeを生成して局面を移動する
+                // -- Since it did not exist as the next node, create a node and move the phase
                 AddNode(m, KifuMoveTimes.Zero);
+                AddNodeComment(m, "My move 4");
                 DoMove(m);
 
             }
 
-            // special nodeに到達してしまった。
+            // You have reached the special node.
             m = IsNextNodeSpecialNode(true, misc);
             if (m != Move.NONE)
             {
@@ -1039,7 +1045,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 DoMove(m);
             }
 
-            // この結果、special nodeに到達する可能性があるが…。
+            // As a result, you may reach a special node ...
 
             EnableKifuList = false;
             PropertyChangedEventEnable = true;
@@ -1047,7 +1053,7 @@ namespace MyShogi.Model.Shogi.Kifu
             RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
 
-            KifuDirty = true; // 新しいnodeに到達したので棋譜は汚れた扱い。
+            KifuDirty = true; // Since I arrived at a new node, the game record is treated as dirty.
 
             return true;
         }
@@ -1122,7 +1128,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // このnodeを探す
             var node = SearchNode(sfen);
             if (node == null)
-                return "メイン棋譜にマージするための開始局面がありませんでした。";
+                return "There was no starting point to merge into the main game record.";
 
             // このnodeにマージしていく。
             tree.RewindToRoot();
@@ -1313,13 +1319,13 @@ namespace MyShogi.Model.Shogi.Kifu
                 // 一番上の桁は、そのあとのPadMidUnicode()でpaddingされるので、PadLeft的なpaddingはしないでおく。
                 string time_string;
                 if (t.TotalSeconds < 60)
-                    time_string = $"{t.Seconds}秒";
+                    time_string = $"{t.Seconds}Seconds";
                 else if (t.TotalMinutes < 60)
-                    time_string = $"{t.Minutes}分{t.Seconds,2}秒";
+                    time_string = $"{t.Minutes}Minutes{t.Seconds,2}Seconds";
                 else if (t.TotalHours < 24)
-                    time_string = $"{t.Hours}時間{t.Minutes,2}分{t.Seconds,2}秒";
+                    time_string = $"{t.Hours}Hours{t.Minutes,2}Minutes{t.Seconds,2}Seconds";
                 else
-                    time_string = $"{t.Days}日{t.Hours,2}時間{t.Minutes,2}分{t.Seconds,2}秒";
+                    time_string = $"{t.Days}Days{t.Hours,2}Hours{t.Minutes,2}Minutes{t.Seconds,2}Seconds";
 
                 var ply_text = $"{indent}{plus}{move_text_game_ply,3}";
 

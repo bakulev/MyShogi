@@ -87,7 +87,7 @@
             this.textBox1.Size = new System.Drawing.Size(208, 20);
             this.textBox1.TabIndex = 7;
             this.textBox1.TabStop = false;
-            this.toolTip1.SetToolTip(this.textBox1, "選択されているエンジン名が表示されています。");
+            this.toolTip1.SetToolTip(this.textBox1, "The selected engine name is displayed. ");
             // 
             // label1
             // 

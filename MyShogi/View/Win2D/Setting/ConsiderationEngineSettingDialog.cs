@@ -164,15 +164,15 @@ namespace MyShogi.View.Win2D.Setting
                switch (dialogType)
                {
                    case ConsiderationEngineSettingDialogType.ConsiderationSetting:
-                       Text = "検討エンジン設定";
-                       label3.Text = "検討で使う思考エンジン：";
+                       Text = "Consider engine settings";
+                       label3.Text = "Thinking engine used in the study:";
                        groupBox1.Enabled = true;
                        break;
 
                    case ConsiderationEngineSettingDialogType.MateSetting:
-                       Text = "詰将棋エンジン設定";
-                       label3.Text = "詰検討で使う思考エンジン：";
-                       groupBox1.Enabled = true; // 詰将棋エンジン側、対応したので有効にしておく。
+                       Text = "Tsume shogi engine setting";
+                       label3.Text = "Thinking engine used for scrutiny:";
+                       groupBox1.Enabled = true; // Tsume shogi engine side, it corresponds, so enable it.
                        break;
                }
            });

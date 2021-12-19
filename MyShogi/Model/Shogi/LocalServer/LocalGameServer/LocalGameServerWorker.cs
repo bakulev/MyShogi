@@ -846,7 +846,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             Move m = Move.ILLEGAL_MOVE;
             kifuManager.Tree.AddNode(m, PlayTimers.GetKifuMoveTimes());
-            kifuManager.Tree.AddNodeComment(m, stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
+            kifuManager.Tree.AddNodeComment(m, stmPlayer.BestMove.ToUsi() /* String Fix later * / / * Original text */);
             kifuManager.Tree.DoMove(m);
 
             GameEnd(m); // これにてゲーム終了。

@@ -59,7 +59,7 @@ namespace MyShogi.Model.Shogi.Core
     }
 
     /// <summary>
-    /// EvalValueの値とScoreBoundの値を一纏めにした構造体
+    /// A structure that combines the value of EvalValue and the value of ScoreBound
     /// </summary>
     public class EvalValueEx
     {
@@ -73,7 +73,7 @@ namespace MyShogi.Model.Shogi.Core
         public ScoreBound Bound;
 
         /// <summary>
-        /// 評価値を反転する。
+        /// Invert the evaluation value.
         /// </summary>
         public EvalValueEx negate()
         {
@@ -92,7 +92,7 @@ namespace MyShogi.Model.Shogi.Core
     public static class EvalValueExtensions
     {
         /// <summary>
-        /// 評価値の値をわかりやすく文字列化する。
+        /// Convert the evaluation value into a character string in an easy-to-understand manner.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -102,17 +102,17 @@ namespace MyShogi.Model.Shogi.Core
             {
                 switch(value)
                 {
-                    case EvalValue.Unknown   : return "不明";
-                    case EvalValue.MatePlus  : return "MATE 手数不明";
-                    case EvalValue.MatedMinus: return "MATED 手数不明";
-                    case EvalValue.NoValue   : return ""; // これ表示するとおかしくなるので表示なしにしとく。
+                    case EvalValue.Unknown   : return "Unknown";
+                    case EvalValue.MatePlus  : return "MATE Plus";
+                    case EvalValue.MatedMinus: return "MATED Minus";
+                    case EvalValue.NoValue   : return ""; // If this is displayed, it will be strange, so leave it out.
                 }
 
-                // int にキャストしないと 0手 が Zero手 と出力される
+                // If you do not cast to int, 0 moves will be output as Zero moves.
                 if (value > 0)
-                    return $"MATE {(int)(EvalValue.Mate - value)}手";
+                    return $"MATE {(int)(EvalValue.Mate - value)} moves";
                 if (value < 0)
-                    return $"MATED {(int)(value - EvalValue.Mated)}手";
+                    return $"MATED {(int)(value - EvalValue.Mated)} moves";
             }
 
             // 0以外は符号付きで出力
@@ -127,31 +127,31 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public static string ToEvalJudgement(this EvalValue value , bool handicapped)
         {
-            var black = handicapped ? "下手" : "先手";
-            var white = handicapped ? "上手" : "後手";
+            var black = handicapped ? "White" : "Black";
+            var white = handicapped ? "White" : "Black";
 
             if (value.IsSpecialValue())
             {
                 if (value > 0)
-                    return $"{black}勝ち";
+                    return $"{black} win";
                 else
-                    return $"{white}勝ち";
+                    return $"{white} win";
             }
             else
             {
                 var v = (int)value;
                 if (v > 0)
                     return
-                        (v >= 2000) ? $"{black}勝勢" :
-                        (v >=  800) ? $"{black}優勢" :
-                        (v >=  300) ? $"{black}有利" :
-                        "形勢互角";
+                        (v >= 2000) ? $"{black} Victory" :
+                        (v >=  800) ? $"{black} Dominance" :
+                        (v >=  300) ? $"{black} advantageous" :
+                        "Equal in shape";
                 else
                     return
-                        (v <= -2000) ? $"{white}勝勢" :
-                        (v <=  -800) ? $"{white}優勢" :
-                        (v <=  -300) ? $"{white}有利" :
-                        "形勢互角";
+                        (v <= -2000) ? $"{white} Victory" :
+                        (v <=  -800) ? $"{white} Dominance" :
+                        (v <=  -300) ? $"{white} advantageous" :
+                        "Equal in shape";
             }
         }
 

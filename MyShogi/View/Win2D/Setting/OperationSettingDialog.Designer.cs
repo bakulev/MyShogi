@@ -79,8 +79,8 @@
             this.richSelector1.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector1.Name = "richSelector1";
             this.richSelector1.SelectionTexts = new string[] {
-        "No, dragged_move_style_0.png, movement of pieces by mouse drag is not allowed.",
-        ", Dragged_move_style_1.png, Allows the movement of pieces by dragging the mouse."};
+        "No,dragged_move_style_0.png,Movement of pieces by mouse drag is not allowed.",
+        "Yes,dragged_move_style_1.png,Allows the movement of pieces by dragging the mouse."};
             this.richSelector1.Size = new System.Drawing.Size(812, 116);
             this.richSelector1.TabIndex = 3;
             // 
@@ -103,14 +103,14 @@
             this.richSelector4.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector4.Name = "richSelector4";
             this.richSelector4.SelectionTexts = new string[] {
-        "None, kifu_firstlastkey_0.png, None.",
-        "Assign to ← and →, kifu_firstlastkey_1.png, cursor keys ← and →. If it is duplica" +
+        "None,kifu_firstlastkey_0.png, None.",
+        "Assign to ← and →,kifu_firstlastkey_1.png, cursor keys ← and →. If it is duplica" +
             "ted with the key corresponding to one move forward / back in the game record, it" +
             " will be invalid.",
-        "Assign to ↑ and ↓, kifu_firstlastkey_2.png, cursor keys ↑ and ↓. If it is duplica" +
+        "Assign to ↑ and ↓,kifu_firstlastkey_2.png, cursor keys ↑ and ↓. If it is duplica" +
             "ted with the key corresponding to one move forward / back in the game record, it" +
             " will be invalid.",
-        "Assign to Page, kifu_firstlastkey_3.png, PageUp and PageDown."};
+        "Assign to Page,kifu_firstlastkey_3.png, PageUp and PageDown."};
             this.richSelector4.Size = new System.Drawing.Size(812, 116);
             this.richSelector4.TabIndex = 6;
             // 
@@ -121,9 +121,9 @@
             this.richSelector3.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector3.Name = "richSelector3";
             this.richSelector3.SelectionTexts = new string[] {
-        "None, kifu_next_specialkey_0.png, None.",
-        "Space, kifu_next_specialkey_1.png, Assign to space key.",
-        "Assign to Enter, kifu_next_specialkey_2.png, Enter key."};
+        "None,kifu_next_specialkey_0.png, None.",
+        "Space,kifu_next_specialkey_1.png, Assign to space key.",
+        "Assign to Enter,kifu_next_specialkey_2.png, Enter key."};
             this.richSelector3.Size = new System.Drawing.Size(812, 116);
             this.richSelector3.TabIndex = 5;
             // 
@@ -134,10 +134,10 @@
             this.richSelector2.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector2.Name = "richSelector2";
             this.richSelector2.SelectionTexts = new string[] {
-        "None, kifu_prevnextkey_0.png, none",
-        "← and →, kifu_prevnextkey_1.png, Assign to the left and right of the cursor keys." +
+        "None,kifu_prevnextkey_0.png, none",
+        "← and →,kifu_prevnextkey_1.png, Assign to the left and right of the cursor keys." +
             "",
-        "↑ and ↓, kifu_prevnextkey_2.png, Assign above and below the cursor keys."};
+        "↑ and ↓,kifu_prevnextkey_2.png, Assign above and below the cursor keys."};
             this.richSelector2.Size = new System.Drawing.Size(812, 116);
             this.richSelector2.TabIndex = 4;
             // 
@@ -160,10 +160,10 @@
             this.richSelector6.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector6.Name = "richSelector6";
             this.richSelector6.SelectionTexts = new string[] {
-        "None, cons_sendpv_key_0.png, none.",
-        "Assign to space, cons_sendpv_key_1.png, space key. If it is duplicated with the k" +
+        "None,cons_sendpv_key_0.png, none.",
+        "Assign to space,cons_sendpv_key_1.png, space key. If it is duplicated with the k" +
             "ey of the game record operation, it will be invalidated.",
-        "Assign to Enter, cons_sendpv_key_2.png, Enter key. If it is duplicated with the k" +
+        "Assign to Enter,cons_sendpv_key_2.png, Enter key. If it is duplicated with the k" +
             "ey of the game record operation, it will be invalidated."};
             this.richSelector6.Size = new System.Drawing.Size(812, 116);
             this.richSelector6.TabIndex = 5;
@@ -175,19 +175,19 @@
             this.richSelector7.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector7.Name = "richSelector7";
             this.richSelector7.SelectionTexts = new string[] {
-        "None, cons_headtailkey_0.png, none",
-        "Shift ← →, cons_headtailkey_1.png, Shift + Assign to the left and right of the cu" +
+        "None,cons_headtailkey_0.png, none",
+        "Shift ← →,cons_headtailkey_1.png, Shift + Assign to the left and right of the cu" +
             "rsor key.",
-        "Shift ↑ ↓, cons_headtailkey_2.png, Shift + Assign to the top and bottom of the cu" +
+        "Shift ↑ ↓,cons_headtailkey_2.png, Shift + Assign to the top and bottom of the cu" +
             "rsor keys.",
-        "← and →, cons_headtailkey_3.png, Assign to the left and right of the cursor keys." +
+        "← and →,cons_headtailkey_3.png, Assign to the left and right of the cursor keys." +
             " If it is duplicated with the key of the game record operation, it will be inval" +
             "idated.",
-        "↑ and ↓, cons_headtailkey_4.png, assign to the top and bottom of the cursor keys." +
+        "↑ and ↓,cons_headtailkey_4.png, assign to the top and bottom of the cursor keys." +
             " If it is duplicated with the key of the game record operation, it will be inval" +
             "idated.",
-        ",When . , Cons_headtailkey_5.png ,, (comma) and. Assign to (period).",
-        "Assign to Page, cons_headtailkey_6.png, PageUp and PageDown. If it is duplicated " +
+        "(comma) When (dot) ,cons_headtailkey_5.png, (comma) and (dot) Assign to (period).",
+        "Assign to Page,cons_headtailkey_6.png, PageUp and PageDown. If it is duplicated " +
             "with the key of the game record operation, it will be invalidated."};
             this.richSelector7.Size = new System.Drawing.Size(812, 116);
             this.richSelector7.TabIndex = 4;
@@ -199,19 +199,19 @@
             this.richSelector5.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector5.Name = "richSelector5";
             this.richSelector5.SelectionTexts = new string[] {
-        "None, cons_prevnextkey_0.png, none",
-        "Shift ← →, cons_prevnextkey_1.png, Shift + Assign to the left and right of the cu" +
+        "None,cons_prevnextkey_0.png, none",
+        "Shift ← →,cons_prevnextkey_1.png, Shift + Assign to the left and right of the cu" +
             "rsor key.",
-        "Shift ↑ ↓, cons_prevnextkey_2.png, Shift + Assign to the top and bottom of the cu" +
+        "Shift ↑ ↓,cons_prevnextkey_2.png, Shift + Assign to the top and bottom of the cu" +
             "rsor keys.",
-        "← and →, cons_prevnextkey_3.png, Assign to the left and right of the cursor keys." +
+        "← and →,cons_prevnextkey_3.png, Assign to the left and right of the cursor keys." +
             " If it is duplicated with the key of the game record operation, it will be inval" +
             "idated.",
-        "↑ and ↓, cons_prevnextkey_4.png, assign to the top and bottom of the cursor keys." +
+        "↑ and ↓,cons_prevnextkey_4.png, assign to the top and bottom of the cursor keys." +
             " If it is duplicated with the key of the game record operation, it will be inval" +
             "idated.",
-        ",When . , Cons_prevnextkey_5.png ,, (comma) and. Assign to (period).",
-        "Assign to Page, cons_prevnextkey_6.png, PageUp and PageDown. If it is duplicated " +
+        "(comma) When (dot) ,cons_prevnextkey_5.png, (comma) and (dot) Assign to (period).",
+        "Assign to Page,cons_prevnextkey_6.png, PageUp and PageDown. If it is duplicated " +
             "with the key of the game record operation, it will be invalidated."};
             this.richSelector5.Size = new System.Drawing.Size(812, 116);
             this.richSelector5.TabIndex = 4;
@@ -235,19 +235,19 @@
             this.richSelector8.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector8.Name = "richSelector8";
             this.richSelector8.SelectionTexts = new string[] {
-        "None, mini_headtailkey_0.png, none",
-        "Ctrl ← →, mini_headtailkey_1.png, Ctrl + Assign to the left and right of the curs" +
+        "None,mini_headtailkey_0.png, none",
+        "Ctrl ← →,mini_headtailkey_1.png, Ctrl + Assign to the left and right of the curs" +
             "or key.",
-        "Ctrl ↑ ↓, mini_headtailkey_2.png, Ctrl + Assign to the top and bottom of the curs" +
+        "Ctrl ↑ ↓,mini_headtailkey_2.png, Ctrl + Assign to the top and bottom of the curs" +
             "or keys.",
-        "← and →, mini_headtailkey_3.png, Assign to the left and right of the cursor key. " +
+        "← and →,mini_headtailkey_3.png, Assign to the left and right of the cursor key. " +
             "If it is duplicated with the key of the game record operation, it will be invali" +
             "dated.",
-        "↑ and ↓, mini_headtailkey_4.png, Assign above and below the cursor keys. If it is" +
+        "↑ and ↓,mini_headtailkey_4.png, Assign above and below the cursor keys. If it is" +
             " duplicated with the key of the game record operation, it will be invalidated.",
-        ",When . , mini_headtailkey_5.png ,, (comma) and. Assign to (period). If it is dup" +
+        "(comma) When (dot) ,mini_headtailkey_5.png ,(comma) and (dot) Assign to (period). If it is dup" +
             "licated with the key of the game record operation, it will be invalidated.",
-        "Assign to Page, mini_headtailkey_6.png, PageUp and PageDown. If it is duplicated " +
+        "Assign to Page,mini_headtailkey_6.png, PageUp and PageDown. If it is duplicated " +
             "with the key of the game record operation, it will be invalidated."};
             this.richSelector8.Size = new System.Drawing.Size(812, 116);
             this.richSelector8.TabIndex = 5;
@@ -259,19 +259,19 @@
             this.richSelector9.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector9.Name = "richSelector9";
             this.richSelector9.SelectionTexts = new string[] {
-        "None, mini_prevnextkey_0.png, none",
-        "Ctrl ← →, mini_prevnextkey_1.png, Ctrl + Assign to the left and right of the curs" +
+        "None,mini_prevnextkey_0.png, none",
+        "Ctrl ← →,mini_prevnextkey_1.png, Ctrl + Assign to the left and right of the curs" +
             "or key.",
-        "Ctrl ↑ ↓, mini_prevnextkey_2.png, Ctrl + Assign to the top and bottom of the curs" +
+        "Ctrl ↑ ↓,mini_prevnextkey_2.png, Ctrl + Assign to the top and bottom of the curs" +
             "or keys.",
-        "← and →, mini_prevnextkey_3.png, Assign to the left and right of the cursor keys." +
+        "← and →,mini_prevnextkey_3.png, Assign to the left and right of the cursor keys." +
             " If it is duplicated with the key of the game record operation, it will be inval" +
             "idated.",
-        "↑ and ↓, mini_prevnextkey_4.png, Assign above and below the cursor keys. If it is" +
+        "↑ and ↓,mini_prevnextkey_4.png, Assign above and below the cursor keys. If it is" +
             " duplicated with the key of the game record operation, it will be invalidated.",
-        ",When . , mini_prevnextkey_5.png ,, (comma) and. Assign to (period). If it is dup" +
+        "(comma) When (dot) ,mini_prevnextkey_5.png ,(comma) and (dot) Assign to (period). If it is dup" +
             "licated with the key of the game record operation, it will be invalidated.",
-        "Assign to Page, cons_prevnextkey_6.png, PageUp and PageDown. If it is duplicated " +
+        "Assign to Page,cons_prevnextkey_6.png, PageUp and PageDown. If it is duplicated " +
             "with the key of the game record operation, it will be invalidated."};
             this.richSelector9.Size = new System.Drawing.Size(812, 116);
             this.richSelector9.TabIndex = 6;

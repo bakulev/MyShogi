@@ -3,14 +3,16 @@
 namespace MyShogi.Model.Shogi.Kifu
 {
     /// <summary>
-    /// 棋譜の表現
-    /// ある局面での指し手、本譜の手順、etc..
+    /// Expression of game record
+    /// Move in a certain situation, procedure of the main score, etc ..
     ///
-    /// 本譜の手順はmoves[0]である。
-    /// 実際の対局で指された指し手は、moves[0]とswapして、moves[0]に持ってくるようにすること。
+    /// The procedure of the main score is moves [0].
+    /// Swap the move pointed in the actual game with moves [0] so that it will be brought to moves [0].
     ///
-    /// 分岐棋譜の時は、そこに本譜の手順が格納されることが保証されているものとする。
-    /// また、書き出しの時も同様で、棋譜ファイルには本譜の手順を1番目に書き出すこと。
+    /// In the case of a branch game record, it is guaranteed that the procedure
+    /// of the main game record is stored there.
+    /// Also, the same applies when exporting, and the procedure
+    /// of the main score should be exported first to the game record file.
     /// </summary>
     public class KifuNode
     {
@@ -20,22 +22,22 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// この局面での指し手(分岐があるので複数ある)
-        /// moves[0]が本譜の手順。
-        /// movesの指し手は重複を許さない。
-        /// (対局後、途中の局面から再度対局を再開させた場合も同じ指し手ならば、そこを上書きしていく)
+        /// Moves in this phase (there are multiple because there are branches)
+        /// moves [0] is the procedure of the main score.
+        /// Move moves do not allow duplication.
+        /// (After the game, if the move is the same even if the game is restarted from the middle of the game, it will be overwritten.) 
         /// </summary>
         public List<KifuMove> moves = new List<KifuMove>();
 
         /// <summary>
-        /// 一手前のnode。これはコンストラクタで渡される。
-        /// 枝を付け替えるときなどにはこれを正しく設定しなおす必要がある。
+        /// The node just before. This is passed in the constructor.
+        /// It is necessary to set this correctly when changing branches.
         /// </summary>
         public KifuNode prevNode;
 
         /// <summary>
-        /// この局面に対する棋譜コメント
-        /// rootNode(開始局面)に対するコメントもここに。
+        /// Game record comment on this aspect
+        /// Comments on rootNode (starting phase) are also here.
         /// </summary>
         public string comment;
 

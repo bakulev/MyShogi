@@ -139,22 +139,22 @@ namespace MyShogi.Model.Shogi.Core
         public StateInfo State() { return st; }
 
         /// <summary>
-        /// 現局面のhash key。
+        /// The hash key of the current phase.
         /// </summary>
         /// <returns></returns>
         public HASH_KEY Key() { return st.key; }
 
-        // 盤上の先手/後手/両方の駒があるところが1であるBitboard
+        // Bitboard where the place where there are first move / second move / both pieces on the board is 1.
         public Bitboard[] byColorBB = new Bitboard[(int)Color.NB];
 
-        // 駒が存在する升を表すBitboard。先後混在。
-        // pieces()の引数と同じく、ALL_PIECES,HDKなどのPieceで定義されている特殊な定数が使える。
+        // Bitboard that represents the box in which the piece exists. Mixed before and after.
+        // As with the arguments of pieces (), special constants defined in Piece such as ALL_PIECES, HDK can be used.
         public Bitboard[] byTypeBB = new Bitboard[(int)Piece.PIECE_BB_NB];
 
         /// <summary>
-        /// 駒落ちであるかのフラグ
-        /// 盤面を初期化した時に、駒箱に駒があれば駒落ちと判定。
-        /// (単玉は駒落ちとして扱わない)
+        /// Flag of whether a piece has been dropped When the board is initialized,
+        /// if there is a piece in the piece box, it is judged as a piece dropped.
+        /// (Single balls are not treated as dropped pieces)
         /// </summary>
         public bool Handicapped;
 
@@ -438,7 +438,7 @@ namespace MyShogi.Model.Shogi.Core
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// 先手か後手か、いずれかの駒がある場所が1であるBitboardが返る。
+        /// Bitboard returns where 1 is the place where either the first move or the second move is located.
         /// </summary>
         /// <returns></returns>
         public Bitboard Pieces()
@@ -447,8 +447,8 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// c == BLACK : 先手の駒があるBitboardが返る
-        /// c == WHITE : 後手の駒があるBitboardが返る
+        /// c == BLACK : Bitboard with the first piece is returned
+        /// c == WHITE : Bitboard with the back piece is returned
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -458,7 +458,7 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 特定の駒種のBitboardを返す。
+        /// Returns the Bitboard for a particular piece type.
         /// </summary>
         /// <param name="pr"></param>
         /// <returns></returns>
@@ -469,7 +469,7 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// pr1とpr2の駒種を合成した(足し合わせた)Bitboardを返す。
+        /// Returns a Bitboard that combines (adds) the pieces of pr1 and pr2.
         /// </summary>
         /// <param name="pr1"></param>
         /// <param name="pr2"></param>
@@ -495,7 +495,7 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// c側の駒種prのbitboardを返す
+        /// Returns the bitboard of the piece type pr on the c side
         /// </summary>
         /// <param name="c"></param>
         /// <param name="pr"></param>
@@ -526,16 +526,16 @@ namespace MyShogi.Model.Shogi.Core
         }
 
 
-        // 駒がない升が1になっているBitboardが返る
+        // Bitboard with no pieces is returned
         public Bitboard Empties()
         {
             return Pieces() ^ Bitboard.AllBB();
         }
 
-        // --- 王手
+        // --- Check
 
-            /// <summary>
-        /// 原局面で王手している駒のBitboardが返る
+        /// <summary>
+        /// The Bitboard of the piece that is the check in the original phase is returned
         /// </summary>
         /// <returns></returns>
         public Bitboard Checkers()
@@ -578,12 +578,12 @@ namespace MyShogi.Model.Shogi.Core
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// 平手の初期局面のsfen形式
+        /// Sfen format of the initial phase of Hirate
         /// </summary>
         public static readonly string SFEN_HIRATE = Sfens.HIRATE;
-        
-        /// それ以外の駒落ちなどのsfen文字列については、
-        /// BoardType.ToSfen()などで取得すること。
+
+        /// For other sfen character strings such as dropped pieces,
+        /// get them with BoardType.ToSfen ().
 
         // -------------------------------------------------------------------------
 
@@ -1747,7 +1747,7 @@ namespace MyShogi.Model.Shogi.Core
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// 現局面でsqに利いているC側の駒を列挙する
+        /// List the pieces on the C side that are good for sq in the current situation
         /// </summary>
         /// <param name="c"></param>
         /// <param name="sq"></param>
@@ -1763,8 +1763,9 @@ namespace MyShogi.Model.Shogi.Core
 
             Color them = c.Not();
 
-            // sの地点に敵駒ptをおいて、その利きに自駒のptがあればsに利いているということだ。
-            // 香の利きを求めるコストが惜しいのでrookEffect()を利用する。
+            // If you put an enemy piece pt at the point of s and you have a pt of your own piece,
+            // it means that you are good at s.
+            // Use rookEffect () because the cost of seeking incense is regrettable.
             return
                 ((Bitboard.PawnEffect(them, sq) & Pieces(Piece.PAWN))
                     | (Bitboard.KnightEffect(them, sq) & Pieces(Piece.KNIGHT))
@@ -1783,7 +1784,7 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 現局面でsqに利いている駒を列挙する
+        /// List the pieces that are good for sq in the current situation
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
@@ -1853,7 +1854,8 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// attackers_to()で駒があればtrueを返す版。(利きの情報を持っているなら、軽い実装に変更できる)
+        /// A version that returns true if there is a piece in attackers_to ().
+        /// (If you have the dominant information, you can change to a lighter implementation)
         /// </summary>
         /// <param name="c"></param>
         /// <param name="sq"></param>

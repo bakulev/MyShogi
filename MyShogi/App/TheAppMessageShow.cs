@@ -77,7 +77,7 @@ namespace MyShogi.App
         {
             if (exit)
             {
-                var message = "例外が発生しましたので終了します。\r\n" + ex.Pretty();
+                var message = "An exception has occurred, so it will end.\r\n" + ex.Pretty();
 
                 // Mono環境でコマンドラインからコマンドを叩いているときにコンソールに
                 // 例外内容が表示されたほうがデバッグしやすいのでConsoleにも出力する。
@@ -87,7 +87,7 @@ namespace MyShogi.App
                 ApplicationExit();
             } else
             {
-                MessageShow("例外が発生しました。\r\n" + ex.Pretty() , MessageShowType.Exception);
+                MessageShow("Exception occured.\r\n" + ex.Pretty() , MessageShowType.Exception);
             }
         }
 

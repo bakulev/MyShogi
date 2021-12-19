@@ -66,26 +66,26 @@ namespace MyShogi.View.Win2D
             {
                 // -- Drawing when the piece is lifted
 
-                var DrawPickedSprite = (Action<Sprite,Point>)((sprite,dest) =>
-                {
+                var DrawPickedSprite = (Action<Sprite, Point>)((sprite, dest) =>
+                 {
                     // Draw the effect applied to the source box.
-                    DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
+                    //DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
 
                     switch (config.PickedMoveDisplayStyle)
-                    {
-                        case 0:
+                     {
+                         case 0:
                             // Draw with a slight lift.
                             picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
-                            break;
+                             break;
 
-                        case 1:
+                         case 1:
                             // Since it is a mode to follow the mouse cursor,
                             // it is at the position of the mouse cursor ..
                             picked_sprite = new SpriteEx(sprite, MouseClientLocation
-                                + new Size(-piece_img_size.Width / 2, -piece_img_size.Height / 2));
-                            break;
-                    }
-                });
+                                 + new Size(-piece_img_size.Width / 2, -piece_img_size.Height / 2));
+                             break;
+                     }
+                 });
 
                 // -- Pieces on the board
 
@@ -96,59 +96,6 @@ namespace MyShogi.View.Win2D
                 var lastMoveFrom = (lastMove != ShogiCore.Move.NONE && !lastMove.IsDrop()) ? lastMove.From() : Square.NB;
                 // The destination box of the last move
                 var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
-
-                // Generate legal moves and only include them.
-                // I feel that this generation, when the situation changes, it is enough to do it once ..
-                // You shouldn't click it many times, so no.
-                Bitboard moves1_bb = Bitboard.ZeroBB();
-                Bitboard moves2_bb = Bitboard.ZeroBB();
-                Move[] pissible_moves1 = new Move[(int)ShogiCore.Move.MAX_MOVES];
-                Move[] pissible_moves2 = new Move[(int)ShogiCore.Move.MAX_MOVES];
-                var possible_pos = pos.Clone();
-                int n1 = MoveGen.LegalAll(possible_pos, pissible_moves1, 0);
-                if (pos.sideToMove == SColor.BLACK)
-                    possible_pos.sideToMove = SColor.WHITE;
-                else if (pos.sideToMove == SColor.WHITE)
-                    possible_pos.sideToMove = SColor.BLACK;
-                int n2 = MoveGen.LegalAll(possible_pos, pissible_moves2, 0);
-                // The move destination square that matches
-                // the move source square for all the generated legal moves
-                // is reflected in the Bitboard.
-                for (int i = 0; i < n1; ++i)
-                {
-                    var m = pissible_moves1[i];
-                    // Where the piece can move
-                    if (!m.IsDrop())
-                        moves1_bb |= m.To();
-                }
-                for (int i = 0; i < n2; ++i)
-                {
-                    var m = pissible_moves2[i];
-                    // Where the piece can move
-                    if (!m.IsDrop())
-                        moves2_bb |= m.To();
-                }
-                var pickedfrom_sprite = SPRITE.PieceMove(PieceMoveEffect.PickedFrom);
-                var moves_image = pickedfrom_sprite.image;
-                var moves1_rect = new Rectangle(
-                    pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + 10,
-                    pickedfrom_sprite.rect.Width - 20, pickedfrom_sprite.rect.Height / 5);
-                var moves2_rect = new Rectangle(
-                    pickedfrom_sprite.rect.X + 10, pickedfrom_sprite.rect.Y + 10,
-                    pickedfrom_sprite.rect.Width - 20, pickedfrom_sprite.rect.Height / 5);
-                var moves1_sprite = new Sprite(moves_image, moves1_rect);
-                var moves2_sprite = new Sprite(moves_image, moves2_rect);
-                int k = 0;
-                for (Square sq = Square.ZERO; k++ < 300 && sq < Square.NB; ++sq)
-                {
-                    var pc = pos.PieceOn(sq);
-                    var dest = PieceLocation((SquareHand)sq, reverse);
-                    // Is it a candidate box for the destination?
-                    if (moves1_bb.IsSet(sq))
-                        DrawSprite(new Point(dest.X + 10, dest.Y + pickedfrom_sprite.rect.Height - moves1_sprite.rect.Height - 10), moves1_sprite);
-                    if (moves2_bb.IsSet(sq))
-                        DrawSprite(new Point(dest.X + 10, dest.Y + 10), moves2_sprite);
-                }
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
@@ -207,6 +154,133 @@ namespace MyShogi.View.Win2D
 
                     // Normal drawing of pieces
                     DrawSprite(dest, sprite);
+                }
+
+
+                // Generate legal moves and only include them.
+                // I feel that this generation, when the situation changes, it is enough to do it once ..
+                // You shouldn't click it many times, so no.
+                Bitboard moves1_bb = Bitboard.ZeroBB();
+                Bitboard moves1_bbd = Bitboard.ZeroBB();
+                Bitboard moves2_bb = Bitboard.ZeroBB();
+                Bitboard moves2_bbd = Bitboard.ZeroBB();
+                Move[] pissible_moves1 = new Move[(int)ShogiCore.Move.MAX_MOVES];
+                Move[] pissible_moves2 = new Move[(int)ShogiCore.Move.MAX_MOVES];
+                var possible_pos = pos.Clone();
+                int n1 = MoveGen.LegalAll(possible_pos, pissible_moves1, 0);
+                if (pos.sideToMove == SColor.BLACK)
+                    possible_pos.sideToMove = SColor.WHITE;
+                else if (pos.sideToMove == SColor.WHITE)
+                    possible_pos.sideToMove = SColor.BLACK;
+                int n2 = MoveGen.LegalAll(possible_pos, pissible_moves2, 0);
+                // The move destination square that matches
+                // the move source square for all the generated legal moves
+                // is reflected in the Bitboard.
+                for (int i = 0; i < n1; ++i)
+                {
+                    var m = pissible_moves1[i];
+                    // Where the piece can move
+                    if (!m.IsDrop()) moves1_bb |= m.To();
+                    else moves1_bbd |= m.To();
+                }
+                for (int i = 0; i < n2; ++i)
+                {
+                    var m = pissible_moves2[i];
+                    // Where the piece can move
+                    if (!m.IsDrop()) moves2_bb |= m.To();
+                    else moves2_bbd |= m.To();
+                }
+
+                int paddingX = 5;
+                int paddingY = 2;
+
+                var my_move_rect = new Rectangle(
+                    ((int)PieceMoveEffect.PickedFrom % 8) * SPRITE.piece_img_width,
+                    ((int)PieceMoveEffect.PickedFrom / 8) * SPRITE.piece_img_height,
+                    SPRITE.piece_img_width, SPRITE.piece_img_height);
+                var my_move_sprite = new Sprite(TheApp.app.ImageManager.PieceMoveImage.image, my_move_rect);
+                if (my_move_sprite != null)
+                {
+                    var moves_image = my_move_sprite.image;
+                    var moves1_rect = new Rectangle(
+                        my_move_sprite.rect.X + paddingX, my_move_sprite.rect.Y + paddingY,
+                        my_move_sprite.rect.Width - paddingX * 2, my_move_sprite.rect.Height / 8);
+                    var moves2_rect = new Rectangle(
+                        my_move_sprite.rect.X + paddingX, my_move_sprite.rect.Y + paddingY,
+                        my_move_sprite.rect.Width - paddingX * 2, my_move_sprite.rect.Height / 8);
+                    var moves1_sprite = new Sprite(moves_image, moves1_rect);
+                    var moves2_sprite = new Sprite(moves_image, moves2_rect);
+                    int k = 0;
+                    for (Square sq = Square.ZERO; k++ < 300 && sq < Square.NB; ++sq)
+                    {
+                        var pc = pos.PieceOn(sq);
+                        var dest = PieceLocation((SquareHand)sq, reverse);
+                        // Is it a candidate box for the destination?
+
+                        // My moves
+                        if ((pos.sideToMove == SColor.BLACK && reverse) || (pos.sideToMove == SColor.WHITE && !reverse))
+                        {
+                            // Show places that could be beat and defended places.
+                            if (moves1_bb.IsSet(sq) || pos.EffectedTo(reverse ? SColor.BLACK : SColor.WHITE, sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + paddingY), moves2_sprite);
+                            // Places where peace could be dropped.
+                            if (moves2_bbd.IsSet(sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + moves1_sprite.rect.Height + paddingY), moves2_sprite);
+                        }
+                        if ((pos.sideToMove == SColor.WHITE && reverse) || (pos.sideToMove == SColor.BLACK && !reverse))
+                        {
+                            // Show places that could be beat and defended places.
+                            if (moves1_bb.IsSet(sq) || pos.EffectedTo(reverse ? SColor.WHITE : SColor.BLACK, sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + my_move_sprite.rect.Height - moves1_sprite.rect.Height - paddingY), moves2_sprite);
+                            // Places where peace could be dropped.
+                            if (moves2_bbd.IsSet(sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + my_move_sprite.rect.Height - moves1_sprite.rect.Height - moves1_sprite.rect.Height - paddingY), moves2_sprite);
+                        }
+                    }
+                }
+
+                var enemy_move_rect = new Rectangle(
+                    ((int)PieceMoveEffect.From % 8) * SPRITE.piece_img_width,
+                    ((int)PieceMoveEffect.From / 8) * SPRITE.piece_img_height,
+                    SPRITE.piece_img_width, SPRITE.piece_img_height);
+                var enemy_move_sprite = new Sprite(TheApp.app.ImageManager.PieceMoveImage.image, enemy_move_rect);
+                if (enemy_move_sprite != null)
+                {
+                    var moves_image = enemy_move_sprite.image;
+                    var moves1_rect = new Rectangle(
+                        enemy_move_sprite.rect.X + paddingX, enemy_move_sprite.rect.Y + paddingY,
+                        enemy_move_sprite.rect.Width - paddingX * 2, enemy_move_sprite.rect.Height / 8);
+                    var moves2_rect = new Rectangle(
+                        enemy_move_sprite.rect.X + paddingX, enemy_move_sprite.rect.Y + paddingY,
+                        enemy_move_sprite.rect.Width - paddingX * 2, enemy_move_sprite.rect.Height / 8);
+                    var moves1_sprite = new Sprite(moves_image, moves1_rect);
+                    var moves2_sprite = new Sprite(moves_image, moves2_rect);
+                    int k = 0;
+                    for (Square sq = Square.ZERO; k++ < 300 && sq < Square.NB; ++sq)
+                    {
+                        var pc = pos.PieceOn(sq);
+                        var dest = PieceLocation((SquareHand)sq, reverse);
+                        
+                        // Enemy moves
+                        if ((pos.sideToMove == SColor.BLACK && !reverse) || (pos.sideToMove == SColor.WHITE && reverse))
+                        {
+                            // Show places that could be beat and defended places.
+                            if (moves2_bb.IsSet(sq) || pos.EffectedTo(reverse ? SColor.BLACK : SColor.WHITE, sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + paddingY), moves2_sprite);
+                            // Places where peace could be dropped.
+                            if (moves2_bbd.IsSet(sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + moves1_sprite.rect.Height + paddingY), moves2_sprite);
+                        }
+                        if ((pos.sideToMove == SColor.WHITE && !reverse) || (pos.sideToMove == SColor.BLACK && reverse))
+                        {
+                            // Show places that could be beat and defended places.
+                            if (moves2_bb.IsSet(sq) || pos.EffectedTo(reverse ? SColor.WHITE : SColor.BLACK, sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + enemy_move_sprite.rect.Height - moves1_sprite.rect.Height - paddingY), moves2_sprite);
+                            // Places where peace could be dropped.
+                            if (moves2_bbd.IsSet(sq))
+                                DrawSprite(new Point(dest.X + paddingX, dest.Y + enemy_move_sprite.rect.Height - moves1_sprite.rect.Height - moves1_sprite.rect.Height - paddingY), moves2_sprite);
+                        }
+                    }
                 }
 
                 // -- Drawing of hand pieces

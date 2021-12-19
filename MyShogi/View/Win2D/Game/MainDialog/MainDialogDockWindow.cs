@@ -200,7 +200,7 @@ namespace MyShogi.View.Win2D
                 // →　resize,move,…、イベントを捕捉するだけでは、漏れがあるようで棋譜ウインドウが前面に来ない瞬間がある。
                 // 結論的には、OwnerをMainWindowにして、Close()のキャンセル処理はしないようにする。
 
-                kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
+                kifuDockWindow.ViewModel.Caption = "Game record window";
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
